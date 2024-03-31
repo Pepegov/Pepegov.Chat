@@ -1,0 +1,29 @@
+<div class="form-signin">
+  <form (ngSubmit)="login()">
+    <mat-card class="login-card">
+      <mat-card-header>
+        <mat-card-title>Login</mat-card-title>
+        <mat-card-subtitle>Please sign in</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field class="form-field">
+          <mat-label>Login</mat-label>
+          <input type="text" matInput [formControl]="loginFormControl" placeholder="login">
+      </mat-form-field>
+    
+      <mat-form-field class="form-field">
+          <mat-label>Enter your password</mat-label>
+          <input matInput [type]="hidePasswordFlag ? 'password' : 'text'" [formControl]="passwordFormControl">
+          <button mat-icon-button matSuffix (click)="hidePasswordFlag = !hidePasswordFlag" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePasswordFlag">
+            <mat-icon>{{hidePasswordFlag ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button [disabled]="!loginFormControl.valid || !passwordFormControl.valid" type="submit" mat-button>Submit</button>
+      </mat-card-actions>
+      </mat-card>
+  </form>
+</div>
+
+

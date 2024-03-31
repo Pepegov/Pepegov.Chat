@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MassTransit" Version="8.1.1" />
+        <PackageReference Include="Pepegov.MicroserviceFramework" Version="2.1.2" />
+        <PackageReference Include="Pepegov.UnitOfWork" Version="3.0.5" />
+        <PackageReference Include="Pepegov.UnitOfWork.EntityFramework" Version="1.2.0" />
+        <PackageReference Include="SignalRSwaggerGen" Version="4.5.0" />
+        <PackageReference Include="SignalRSwaggerGen.Core" Version="1.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Pepegov.Chat.Server.DAL\Pepegov.Chat.Server.DAL.csproj" />
+    </ItemGroup>
+    
+</Project>

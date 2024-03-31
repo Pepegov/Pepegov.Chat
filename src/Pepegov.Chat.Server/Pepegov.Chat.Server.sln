@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pepegov.Chat.Server.DAL", "PepegovChat\PepegovChat\Pepegov.Chat.Server.DAL\Pepegov.Chat.Server.DAL.csproj", "{37B96C20-503B-4F68-98A4-0FB3245F7B76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pepegov.Chat.Server.PL", "PepegovChat\PepegovChat\Pepegov.Chat.Server.PL\Pepegov.Chat.Server.PL.csproj", "{42E9B57C-3596-4F3F-9900-FBE28A689095}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pepegov.Chat.Server.BL", "PepegovChat\PepegovChat\Pepegov.Chat.Server.BL\Pepegov.Chat.Server.BL.csproj", "{30B32820-285B-4F0E-B94E-B0F333CF31FD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37B96C20-503B-4F68-98A4-0FB3245F7B76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37B96C20-503B-4F68-98A4-0FB3245F7B76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37B96C20-503B-4F68-98A4-0FB3245F7B76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37B96C20-503B-4F68-98A4-0FB3245F7B76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42E9B57C-3596-4F3F-9900-FBE28A689095}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42E9B57C-3596-4F3F-9900-FBE28A689095}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42E9B57C-3596-4F3F-9900-FBE28A689095}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42E9B57C-3596-4F3F-9900-FBE28A689095}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30B32820-285B-4F0E-B94E-B0F333CF31FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30B32820-285B-4F0E-B94E-B0F333CF31FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30B32820-285B-4F0E-B94E-B0F333CF31FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30B32820-285B-4F0E-B94E-B0F333CF31FD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,25 @@
+<mat-drawer-container>
+  <mat-drawer #drawer mode="side">
+    <app-sidenav-list (sidenavClose)="drawer.close()"></app-sidenav-list>
+  </mat-drawer>
+
+  <mat-drawer-content>
+    <p>
+      <mat-toolbar>
+        <button mat-icon-button (click)="drawer.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <span>Pepegov.Chat</span>
+        <span></span>
+        <button mat-icon-button>
+          <mat-icon>share</mat-icon>
+        </button>
+      </mat-toolbar>
+    </p>
+
+    <div class="container" style="margin: 2%;">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-drawer-content>
+
+</mat-drawer-container>
