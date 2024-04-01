@@ -1,29 +1,29 @@
-<div style="height:100%">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Chat</mat-card-title>
-      <mat-card-subtitle>You can send message</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <div style="overflow-y: scroll;">
-        <a *ngFor="let message of messageInGroup">
-          <div>
-            <h5>{{message.senderDisplayName}}</h5>
-            <small>{{message.messageSent}}</small>
-          </div>
-          <p>{{message.content}}</p>
-          <small>{{message.messageSent}} {{dateVal | date:'d/M/yyyy, h:mm a'}}</small>
-        </a>
-      </div>
-    </mat-card-content>
-    <mat-card-actions>
-      <form [formGroup]="chatForm" autocomplete="off" (ngSubmit)="sendMessage()">
-        <mat-form-field>
-          <mat-label>message text</mat-label>
-          <input matInput type="text" formControlName='content' name="content" placeholder="Type message here...">
-        </mat-form-field>
-      </form>
-    </mat-card-actions>
-  </mat-card>
-
-</div>
+<mat-card style="height:100%; width: 100%">
+  <mat-card-header>
+    <mat-card-title>Chat</mat-card-title>
+    <mat-card-subtitle>You can send message</mat-card-subtitle>
+  </mat-card-header>
+  <hr width="100%" size="1%" >
+  <mat-card-content style="height: 100%">
+    <div *ngIf="messageCount > 0" style="overflow-y: scroll;">
+      <a *ngFor="let message of messageInGroup">
+        <div>
+          <h5>{{message.senderDisplayName}}</h5>
+          <small>{{message.messageSent}}</small>
+        </div>
+        <p>{{message.content}}</p>
+        <small>{{message.messageSent}} {{dateVal | date:'d/M/yyyy, h:mm a'}}</small>
+      </a>
+    </div>
+    <div style="text-align: center;" *ngIf="messageCount == 0">
+      <h4>Messages not found</h4>
+    </div>
+  </mat-card-content>
+  <mat-card-footer style="width: 100%">
+    <form [formGroup]="chatForm" autocomplete="off" (ngSubmit)="sendMessage()">
+      <mat-form-field style="width: 100%">
+        <input matInput type="text" formControlName='content' name="content" placeholder="Type message here...">
+      </mat-form-field>
+    </form>
+  </mat-card-footer>
+</mat-card>

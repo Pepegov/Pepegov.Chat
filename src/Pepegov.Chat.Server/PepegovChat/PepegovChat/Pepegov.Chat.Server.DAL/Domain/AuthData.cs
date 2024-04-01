@@ -1,4 +1,5 @@
-using OpenIddict.Server.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using OpenIddict.Validation.AspNetCore;
 
 namespace Pepegov.Chat.Server.DAL.Domain;
 
@@ -10,5 +11,5 @@ public class AuthData
     /// <summary>
     /// Schemes for authorization filter
     /// </summary>
-    public const string AuthenticationSchemes = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme;
+    public const string AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme + "," + OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
 }

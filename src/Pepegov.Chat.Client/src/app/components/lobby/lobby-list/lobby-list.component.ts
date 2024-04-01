@@ -4,15 +4,13 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
 import { Room } from 'src/app/models/chat/room';
-import { User } from 'src/app/models/authorization/user';
-import { AccountService } from 'src/app/services/account.service';
 import { ConfigService } from 'src/app/services/ConfigService';
 import { RoomService } from 'src/app/services/room.service';
 import { UtilityStreamService } from 'src/app/services/utility-stream.service';
 import { AddRoomModalComponent } from '../create-room-modal/create-room-modal.component';
-import { EditRoomModalComponent } from '../edit-room-modal/edit-room-modal.component';
 import { PagedList } from 'src/app/models/api-result/paged-list';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
+import {OpenIdService, UserInfo} from "../../../services/openid.service";
 
 @Component({
   selector: 'app-lobby-list',
@@ -29,19 +27,19 @@ export class LobbyListComponent implements OnInit {
   pagedList: PagedList<Room>
   data: any;//ngModel select html
   roomGroupBy: any[] = [];
-  currentUser: User | null;
+  currentUser: UserInfo | null;
   dataGroupByUser: Map<any, any>;
 
   constructor(private modalService: BsModalService,
     private roomService: RoomService,
-    private accountService: AccountService,
+    private accountService: OpenIdService,
     private utility: UtilityStreamService,
     private router: Router,
     private config: ConfigService,
     private toastr: ToastrService,
     private dialogRef : MatDialog) {
       //this.pageSize = this.config.pageSize
-      this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.currentUser = user)
+      this.accountService.userProfileSubject.pipe(take(1)).subscribe(user => this.currentUser = user)
   }
 
   ngOnInit(): void {
@@ -72,7 +70,7 @@ export class LobbyListComponent implements OnInit {
 
     //call from signalR
     this.utility.kickedOutUser$.subscribe(val=>{
-      this.accountService.Logout()
+      this.accountService.logout()
       this.toastr.info('You have been locked by admin')
       this.router.navigateByUrl('/login')
     })

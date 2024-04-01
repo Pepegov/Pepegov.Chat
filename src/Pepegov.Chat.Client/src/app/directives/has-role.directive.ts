@@ -1,20 +1,19 @@
 import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
-import { User } from '../models/authorization/user';
-import { AccountService } from '../services/account.service';
+import {OpenIdService, UserInfo} from "../services/openid.service";
 
 @Directive({
   selector: '[appHasRole]'
 })
 export class HasRoleDirective implements OnInit {
   @Input() appHasRole: string[];
-  user: User;
+  user: UserInfo;
   //<li class="nav-item" *appHasRole='["admin", "superadmin"]'>
   constructor(private viewContainerRef: ViewContainerRef,
     private templateRef: TemplateRef<any>,
-    private accountService: AccountService) { }
+    private accountService: OpenIdService) { }
 
   ngOnInit(): void {
-    this.accountService.currentUser$.subscribe(user => {
+    this.accountService.userProfileSubject.subscribe(user => {
       this.user = user;
     })
   }

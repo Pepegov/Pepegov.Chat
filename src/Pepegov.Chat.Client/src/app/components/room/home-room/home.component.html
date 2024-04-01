@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-12">
         <div>
-          <div style="margin-bottom: 1%;">
+          <div style="margin-bottom: 1%; display: flex; gap: 1%">
             <button mat-flat-button
                     (click)="StartRecord()"
                     *ngIf="isRecorded"
@@ -25,17 +25,27 @@
 </div>
 
 <mat-grid-list cols="3" rowHeight="600px">
-    <!-- local video of current user -->
+    <!-- videos -->
     <mat-grid-tile
+        class="video-flex"
         [colspan]="2">
-        <div class="row mt-1 justify-content-center">
-          <video #videoPlayer [muted]="true" width="100%" height="40%"></video>
+      <div class="video-container">
+        <video #videoPlayer [muted]="true" class="video-box"></video>
+
+<!--        <div *ngSwitchCase="'SHARESCREEN'">-->
+<!--          <video [srcObject]="shareScreenStream" (loadedmetadata)="onLoadedMetadata($event)" muted></video>-->
+<!--          <span class="label badge bg-danger" *ngIf="userIsSharing">{{userIsSharing}}</span>-->
+<!--        </div>-->
+
+        <div *ngFor="let user of tempvideos">
+          <app-video-box-user class="video-box" [userVideo]="user"></app-video-box-user>
         </div>
+      </div>
     </mat-grid-tile>
     <!-- text chat -->
     <mat-grid-tile
         [colspan]="1">
-        <text-chat></text-chat>
+        <text-chat style="width: 100%; height: 100%"></text-chat>
     </mat-grid-tile>
 </mat-grid-list>
 
@@ -43,35 +53,11 @@
 <div class="row mt-1">
     <div class="col-md-7">
         <div [ngSwitch]="statusScreen">
-            <!-- the same view can be shown in more than one case -->
             <!-- SHARESCREEN -->
             <div style="position: relative;" id="share-screen" *ngSwitchCase="'SHARESCREEN'">
                 <video [srcObject]="shareScreenStream" (loadedmetadata)="onLoadedMetadata($event)" muted></video>
                 <span class="label badge bg-danger" *ngIf="userIsSharing">{{userIsSharing}}</span>
             </div>
-        </div>
-    </div>
-    <div class="col-md-5">
-        <div style="height: 100%;">
-            <tabset>
-                <tab (selectTab)="onSelect($event)">
-                    <ng-template tabHeading>
-                        <span class="badge badge-secondary bg-secondary" *ngIf="videos.length > maxUserDisplay">{{videos.length}}</span>
-                    </ng-template>
-
-                    <div class="row" style="max-height: 430px; overflow-y: scroll;">
-                        <div class="col-6" *ngFor="let user of tempvideos">
-                            <app-video-box-user [userVideo]="user"></app-video-box-user>
-                        </div>
-
-                        <div class="col-12" *ngIf="videos.length > maxUserDisplay">
-                            <div class="text-center">
-                                <div class="box text-secondary" style="font-size: x-large;"> +{{videos.length - maxUserDisplay}}</div>
-                            </div>
-                        </div>
-                    </div>
-                </tab>
-            </tabset>
         </div>
     </div>
 </div>

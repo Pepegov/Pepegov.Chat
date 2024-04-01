@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.Connections;
+using Pepegov.Chat.Server.BL.Hubs;
 using Pepegov.MicroserviceFramework.AspNetCore.WebApplicationDefinition;
 using Pepegov.MicroserviceFramework.Definition;
 using Pepegov.MicroserviceFramework.Definition.Context;
@@ -13,13 +14,16 @@ public class CommonDefinition : ApplicationDefinition
     public override async Task ConfigureApplicationAsync(IDefinitionApplicationContext context)
     {
         var app = context.Parse<WebDefinitionApplicationContext>().WebApplication;
-        // app.UseDefaultFiles();
-        // app.UseStaticFiles();
-        //
-        // app.UseEndpoints(endpoints =>
-        // {
-        //     endpoints.MapControllers();
-        // });
+        //app.UseDefaultFiles();
+        //app.UseStaticFiles();
+        //app.UseHttpsRedirection();
+        
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapHub<PresenceHub>("hubs/presence").WithOpenApi();
+            endpoints.MapHub<ChatHub>("hubs/chathub").WithOpenApi();
+        });
     }
 
     public override async Task ConfigureServicesAsync(IDefinitionServiceContext context)

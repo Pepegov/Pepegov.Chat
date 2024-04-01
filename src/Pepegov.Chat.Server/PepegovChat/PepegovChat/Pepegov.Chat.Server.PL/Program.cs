@@ -23,24 +23,7 @@ try
     //Add definitions
     var assembly = typeof(Program).Assembly;
     await builder.AddApplicationDefinitions(assembly);
-
-    builder.Services.AddCors(options =>
-    {
-        options.AddDefaultPolicy(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-    });
     
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy(name: "Origins",
-            builder =>
-            {
-                builder.WithOrigins("https://localhost:4200")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
-            });
-    });
-
     
     //Create web application
     var app = builder.Build();
@@ -55,7 +38,7 @@ try
     app.UseSerilogRequestLogging();
 
     //Run app
-    app.Run();
+    await app.RunAsync();
 
     return 0;
 }
@@ -72,5 +55,5 @@ catch (Exception ex)
 }
 finally
 {
-    Log.CloseAndFlush();
+    await Log.CloseAndFlushAsync();
 }

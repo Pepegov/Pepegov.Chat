@@ -6,14 +6,14 @@ import {
   HttpInterceptor
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AccountService } from '../services/account.service';
+import {OpenIdService} from "../services/openid.service";
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-  constructor(private accountService: AccountService) {}
+  constructor(private openIdService: OpenIdService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    let token : string = this.accountService.GetAccessToken();
+    let token : string = this.openIdService.getAccessToken();
     if(token){
       request = request.clone({
         setHeaders:{

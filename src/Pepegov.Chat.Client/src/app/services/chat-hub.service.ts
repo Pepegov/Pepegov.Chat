@@ -6,15 +6,14 @@ import { take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Member } from '../models/chat/member';
 import { Message } from '../models/chat/message';
-import { User } from '../models/authorization/user';
 import { MessageCountStreamService } from './message-count-stream.service';
 import { MuteCamMicService } from './mute-cam-mic.service';
+import {UserInfo} from "./openid.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatHubService {
-
   hubUrl = environment.hubUrl;
   private hubConnection: HubConnection;
 
@@ -34,7 +33,7 @@ export class ChatHubService {
     private messageCount: MessageCountStreamService,
     private muteCamMicro: MuteCamMicService) { }
 
-  createHubConnection(user: User, roomId: string, token : string){
+  createHubConnection(user: UserInfo, roomId: string, token : string){
 
     this.hubConnection = new HubConnectionBuilder()
     .withUrl(this.hubUrl+ 'chathub?roomId=' + roomId, {

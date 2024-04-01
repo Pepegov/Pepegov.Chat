@@ -4,18 +4,17 @@ import { TabDirective } from 'ngx-bootstrap/tabs';
 import { Subscription } from 'rxjs';
 import { eMeet } from '../../../models/chat/eMeeting';
 import { Member } from '../../../models/chat/member';
-import { User } from '../../../models/authorization/user';
 import { VideoElement } from '../../../models/chat/video-element';
-import { AccountService } from '../../../services/account.service';
 import { ChatHubService } from '../../../services/chat-hub.service';
 import { MessageCountStreamService } from '../../../services/message-count-stream.service';
-import Peer from "peerjs"; //tsconfig.json "esModuleInterop": true,
 import { MuteCamMicService } from '../../../services/mute-cam-mic.service';
 import { RecordFileService } from '../../../services/record-file.service';
 import { ToastrService } from 'ngx-toastr';
 import { ConfigService } from '../../../services/ConfigService';
 import { UtilityStreamService } from '../../../services/utility-stream.service';
 import {ChatComponent} from "../chat/chat.component";
+import {OpenIdService, UserInfo} from "../../../services/openid.service";
+import Peer from "peerjs";
 
 @Component({
   selector: 'app-home',
@@ -24,12 +23,12 @@ import {ChatComponent} from "../chat/chat.component";
 })
 export class HomeComponent implements OnInit, OnDestroy {
   isMeeting: boolean;
-  currentUser: User;
+  currentUser: UserInfo;
   currentMember: Member;
   subscriptions = new Subscription();
   statusScreen: eMeet;
   shareScreenPeer: any;
-  @ViewChild('videoPlayer') localvideoPlayer: ElementRef;
+  @ViewChild('videoPlayer') localVideoPlayer: ElementRef;
   shareScreenStream: any;
   enableShareScreen = true;// enable or disable button sharescreen
   isStopRecord = false;
@@ -37,6 +36,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   videos: VideoElement[] = [];
   isRecorded: boolean;
   userIsSharing: string;
+  testVideos: [
+    "123",
+    "355",
+    "qwe",
+    "asd"
+  ];
 
   constructor(private chatHub: ChatHubService,
     private shareScreenService: MuteCamMicService,
@@ -47,12 +52,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     private utility: UtilityStreamService,
     private recordFileService: RecordFileService,
     private messageCountService: MessageCountStreamService,
-    private accountService: AccountService,
+    private accountService: OpenIdService,
     private chatComponent : ChatComponent) {
-    this.accountService.currentUser$.subscribe(user => {
+
+    this.accountService.userProfileSubject.subscribe(user => {
       if (user) {
         this.currentUser = user;
-        this.currentMember = { userName: user.login, displayName: user.name + ' ' + user.lastName} as Member
+        this.currentMember = { userName: user.nickname, displayName: user.name + ' ' + user.family_name} as Member
         console.log("Current member")
         console.log(this.currentMember)
       }
@@ -89,14 +95,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     console.log("creating local stream...")
     this.createLocalStream()
     console.log("creating hub connection...")
-    this.currentUser = JSON.parse(this.accountService.GetCurretUser());
-    this.currentMember = { userName: this.currentUser.login, displayName: this.currentUser.name + ' ' + this.currentUser.lastName} as Member
-    this.chatHub.createHubConnection(this.currentUser, this.roomId, this.accountService.GetAccessToken())
+    this.accountService.userProfileSubject.subscribe((userInfo) => {this.currentUser = userInfo})
+    this.currentMember = { userName: this.currentUser.nickname, displayName: this.currentUser.name + ' ' + this.currentUser.family_name} as Member
+    this.chatHub.createHubConnection(this.currentUser, this.roomId, this.accountService.getAccessToken())
 
     console.log(this.currentUser);
     console.log(this.currentMember)
-    console.log("Current user login: "+ this.currentUser.login)
-    this.myPeer = new Peer(this.currentUser.login, {
+    console.log("Current user login: "+ this.currentUser.nickname)
+    this.myPeer = new Peer(this.currentUser.nickname, {
       config: {
         'iceServers': [{
           urls: "stun:stun.l.google.com:19302",
@@ -113,7 +119,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       console.log("open new user peer " + userId)
     });
 
-    this.shareScreenPeer = new Peer('share_' + this.currentUser.login, {
+    this.shareScreenPeer = new Peer('share_' + this.currentUser.nickname, {
       config: {
         'iceServers': [{
           urls: "stun:stun.l.google.com:19302",
@@ -159,7 +165,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.subscriptions.add(
       this.chatHub.oneOnlineUser$.subscribe(member => {
-        if (this.currentUser.login !== member.userName) {
+        if (this.currentUser.nickname !== member.userName) {
           // Let some time for new peers to be able to answer
           setTimeout(() => {
             const call = this.myPeer.call(member.userName, this.stream, {
@@ -189,7 +195,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     console.log("Leght of videos " + this.videos.length)
 
-    console.log("2")
     this.subscriptions.add(
       this.shareScreenService.shareScreen$.subscribe(val => {
         if (val) {//true = share screen
@@ -204,7 +209,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       })
     )
 
-    console.log("3")
     this.subscriptions.add(this.shareScreenService.lastShareScreen$.subscribe(val => {
       if (val.isShare) {//true = share screen
         this.chatHub.shareScreenToUser(this.roomId, val.username, true)
@@ -214,27 +218,25 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     }))
 
-    console.log("4")
     this.subscriptions.add(this.utility.kickedOutUser$.subscribe(val => {
       this.isMeeting = false
-      this.accountService.Logout()
+      this.accountService.logout()
       this.toastr.info('You have been locked by admin')
       this.router.navigateByUrl('/login')
     }))
 
-    console.log("5")
     this.subscriptions.add(this.shareScreenService.userIsSharing$.subscribe(val => {
       this.userIsSharing = val
     }))
   }
 
    addMyVideo(stream: MediaStream) {
-    const myMember = { userName: this.currentUser.login, displayName: this.currentUser.name } as Member
+    const myMember = { userName: this.currentUser.nickname, displayName: this.currentUser.name } as Member
     console.log("my member username " + myMember.userName + " dispalyName " + myMember.displayName)
     this.videos.push({
       muted: true,
       srcObject: stream,
-      user: { userName: this.currentUser.login, displayName: this.currentUser.name } as Member,
+      user: { userName: this.currentUser.nickname, displayName: this.currentUser.name } as Member,
     });
   }
 
@@ -273,9 +275,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   async createLocalStream() {
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ video: this.enableVideo, audio: this.enableAudio });
-      this.localvideoPlayer.nativeElement.srcObject = this.stream;
-      this.localvideoPlayer.nativeElement.load();
-      this.localvideoPlayer.nativeElement.play();
+      this.localVideoPlayer.nativeElement.srcObject = this.stream;
+      this.localVideoPlayer.nativeElement.load();
+      this.localVideoPlayer.nativeElement.play();
     } catch (error) {
       console.error(error);
       alert(`Can't join room, error ${error}`);

@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { Room } from '../models/chat/room';
 import { PagedList } from 'src/app/models/api-result/paged-list';
 import { ApiResult } from 'src/app/models/api-result/api-result';
+import {OpenIdService} from "./openid.service";
 
 @Injectable({
   providedIn: 'root'
@@ -11,10 +12,10 @@ import { ApiResult } from 'src/app/models/api-result/api-result';
 export class RoomService {
   baseUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private accountService : OpenIdService) { }
 
   getRooms(pageIndex: number, pageSize: number){
-    return this.http.get<ApiResult<PagedList<Room>>>(this.baseUrl+'room/get-paged'+'?pageIndex='+pageIndex+'&pageSize='+pageSize);
+    return this.http.get<ApiResult<PagedList<Room>>>(this.baseUrl+'room/get-paged'+'?pageIndex='+pageIndex+'&pageSize='+pageSize,); //{ headers: this.accountService.authHeader() }
   }
 
   addRoom(name: string){

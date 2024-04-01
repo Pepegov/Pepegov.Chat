@@ -15,6 +15,7 @@ import {
   UntypedFormControl,
   UntypedFormGroup,
 } from '@angular/forms';
+import {OpenIdService} from "../../services/openid.service";
 
 @Component({
   selector: 'app-login',
@@ -26,18 +27,18 @@ export class LoginComponent implements OnInit {
   loginFormControl = new FormControl('', [Validators.required, Validators.min(5)]);
   passwordFormControl = new FormControl('', [Validators.required, Validators.min(5)]);
   user: User;
-  
-  constructor(public accountService: AccountService, 
-    private router: Router, 
+
+  constructor(public accountService: OpenIdService,
+    private router: Router,
     private toastr: ToastrService,
     ) {
-    this.accountService.currentUser$.pipe(take(1)).subscribe(user=> this.user = user);
+    //this.accountService.currentUser$.pipe(take(1)).subscribe(user=> this.user = user);
   }
 
   ngOnInit(): void {
     if(this.user){//if user login then redict to home page
       this.router.navigateByUrl('/room');
-    } 
+    }
   }
 
   login(){
@@ -46,7 +47,7 @@ export class LoginComponent implements OnInit {
       data.UserName = this.loginFormControl.value;
       data.Password = this.passwordFormControl.value;
 
-      this.accountService.login(data)
-    } 
+      //this.accountService.loginPassword(data)
+    }
   }
 }

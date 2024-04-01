@@ -39,6 +39,11 @@ public class RoomService : IRoomService
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var roomRepository = _unitOfWorkInstance.GetRepository<Room>();
+        if (!await roomRepository.ExistsAsync(selector: x => x.Id == id, cancellationToken: cancellationToken))
+        {
+            throw new MicroserviceNotFoundException();
+        }
+        
         roomRepository.Delete(id);
         await _unitOfWorkInstance.SaveChangesAsync(cancellationToken);
         

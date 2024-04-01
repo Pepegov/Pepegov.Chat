@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Pepegov.Chat.Server.DAL.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Server.AspNetCore;
-using Pepegov.Chat.Server.BL.Hubs;
 using Pepegov.Chat.Server.PL.Definitions.OpenIddict;
 using Pepegov.Chat.Server.PL.Definitions.Options.Models;
 using Pepegov.MicroserviceFramework.AspNetCore.WebApplicationDefinition;
@@ -18,24 +18,32 @@ namespace Pepegov.Chat.Server.PL.Definitions.Identity;
 /// </summary>
 public class AuthorizationDefinition : ApplicationDefinition
 {
+    public new int Priority = 8;
+    
     public override async Task ConfigureServicesAsync(IDefinitionServiceContext context)
     {
-        var identityConfiguration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile(AppData.IdentitySettingPath)
-            .Build();
-
-        var url = identityConfiguration.GetSection("IdentityServerUrl").GetValue<string>("Authority");
-        var currentClient = identityConfiguration.GetSection("CurrentIdentityClient").Get<IdentityClientOption>()!;
+        var url = context.Configuration.GetSection("IdentityServerUrl").GetValue<string>("Authority");
+        var currentClient = context.Configuration.GetSection("CurrentIdentityClient").Get<IdentityClientOption>()!;
 
         context.ServiceCollection
             .AddAuthentication(options =>
             {
-                options.DefaultScheme = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddJwtBearer(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme, "Bearer", options =>
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.Name = ".Pepegov.Session";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                
+                options.LoginPath = "/connect/login";
+                options.LogoutPath = "/connect/logout";
+                options.AccessDeniedPath = "/connect/access-denied";
+            })
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, "Bearer", options =>
             {
                 options.SaveToken = true;
                 options.Audience = currentClient.Id;
@@ -43,24 +51,11 @@ public class AuthorizationDefinition : ApplicationDefinition
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateAudience =
-                        false, // Audience should be defined on the authorization server or disabled as shown
+                    ValidateAudience = false, // Audience should be defined on the authorization server or disabled as shown
                     ClockSkew = new TimeSpan(0, 0, 30)
                 };
                 options.Events = new JwtBearerEvents
                 {
-                    OnMessageReceived = context =>
-                    {
-                        var accessToken = context.Request.Query["access_token"];
-
-                        var path = context.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
-                        {
-                            context.Token = accessToken;
-                        }
-                
-                        return Task.CompletedTask;
-                    },
                     OnChallenge = context =>
                     {
                         context.HandleResponse();
@@ -79,12 +74,10 @@ public class AuthorizationDefinition : ApplicationDefinition
                         }
 
                         // Add some extra context for expired tokens.
-                        if (context.AuthenticateFailure != null && context.AuthenticateFailure.GetType() ==
-                            typeof(SecurityTokenExpiredException))
+                        if (context.AuthenticateFailure != null && context.AuthenticateFailure.GetType() == typeof(SecurityTokenExpiredException))
                         {
                             var authenticationException = context.AuthenticateFailure as SecurityTokenExpiredException;
-                            context.Response.Headers.Add("x-token-expired",
-                                authenticationException?.Expires.ToString("o"));
+                            context.Response.Headers.Add("x-token-expired", authenticationException?.Expires.ToString("o"));
                             context.ErrorDescription = $"The token expired on {authenticationException?.Expires:o}";
                         }
 
@@ -96,11 +89,12 @@ public class AuthorizationDefinition : ApplicationDefinition
                     }
                 };
             });
-
+        
         context.ServiceCollection.AddAuthorization(options =>
         {
             options.AddPolicy(AuthData.AuthenticationSchemes, policy =>
             {
+                policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme);
                 policy.RequireAuthenticatedUser();
                 //policy.RequireClaim("scope", "api");
             });
@@ -119,16 +113,6 @@ public class AuthorizationDefinition : ApplicationDefinition
         app.UseCors(AppData.PolicyName);
         app.UseAuthentication();
         app.UseAuthorization();
-        
-        app.UseDefaultFiles();
-        app.UseStaticFiles();
-        
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-            endpoints.MapHub<PresenceHub>("hubs/presence").WithOpenApi();
-            endpoints.MapHub<ChatHub>("hubs/chathub").WithOpenApi();
-        });
 
         // registering UserIdentity helper as singleton
         UserIdentity.Instance.Configure(app.Services.GetService<IHttpContextAccessor>()!);

@@ -7,6 +7,8 @@ import { tap } from 'rxjs/operators';
 import { PresenceService } from './presence.service';
 import { AuthData } from '../models/authorization/auth-data'
 import { Token } from '../models/authorization/token'
+import {Router} from "@angular/router";
+import {roLocale} from "ngx-bootstrap/chronos";
 
 @Injectable({
   providedIn: 'root'
@@ -15,12 +17,11 @@ export class AccountService {
   baseUrl = environment.apiUrl;
   private currentUserSource = new ReplaySubject<User | null>(1);
   currentUser$ = this.currentUserSource.asObservable();
-  router: any;
   //errorHandler: any;
 
-  constructor(private http: HttpClient, private presence: PresenceService) {  }
+  constructor(private http: HttpClient, private presence: PresenceService, private router: Router) {  }
 
-  login(authData: AuthData){
+  loginPassword(authData: AuthData){
     const formData = new URLSearchParams()
 
     //TODO fix that

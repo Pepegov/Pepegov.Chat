@@ -23,6 +23,7 @@
     "@angular/router": "^16.2.0",
     "@microsoft/signalr": "^7.0.12",
     "angular": "^1.8.3",
+    "angular-oauth2-oidc": "^17.0.2",
     "ng-zorro-antd": "^16.2.0",
     "ngx-bootstrap": "^11.0.2",
     "ngx-spinner": "^16.0.2",

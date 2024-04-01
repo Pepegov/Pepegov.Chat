@@ -4,10 +4,9 @@
 
 export const environment = {
   production: false,
-  //apiUrl: '/api/',
-  apiUrl: 'https://localhost:5001/api/',
-  hubUrl: 'https://localhost:5001/hubs/' 
-  //hubUrl: '/hubs/'
+  apiUrl: '/api/',
+  hubUrl: '/hubs/',
+  identityUrl : "/token/"
 };
 
 /*

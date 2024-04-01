@@ -87,13 +87,8 @@ public class SwaggerDefinition : ApplicationDefinition
                 return tags;
             });
 
-            var identityConfiguration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile(AppData.IdentitySettingPath)
-                .Build();
-
-            var url = identityConfiguration.GetSection("IdentityServerUrl").GetValue<string>("Authority");
-            var currentClient = identityConfiguration.GetSection("CurrentIdentityClient").Get<IdentityClientOption>()!;
+            var url = context.Configuration.GetSection("IdentityServerUrl").GetValue<string>("Authority");
+            var currentClient = context.Configuration.GetSection("CurrentIdentityClient").Get<IdentityClientOption>()!;
             var scopes = currentClient.Scopes!.ToDictionary(x => x, x => x);
 
             options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme

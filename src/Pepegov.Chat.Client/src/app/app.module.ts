@@ -20,7 +20,7 @@ import { en_US } from 'ng-zorro-antd/i18n';
 import { CommonModule, registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import {HttpClient, HttpClientModule, HTTP_INTERCEPTORS, provideHttpClient} from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { HasRoleDirective } from './directives/has-role.directive';
@@ -30,7 +30,6 @@ import { JwtInterceptor } from './interceptor/jwt.interceptor';
 import { LoadingInterceptor } from './interceptor/loading.interceptor';
 
 import { HomeComponent } from './components/room/home-room/home.component';
-import { NavComponent } from './components/nav/nav.component';
 import { LoginComponent } from './components/login/login.component';
 import { NotfoundComponent } from './components/error-page/notfound/notfound.component';
 import { ServerErrorComponent } from './components/error-page/server-error/server-error.component';
@@ -58,6 +57,7 @@ import { map } from 'rxjs';
 import { ChatComponent } from './components/room/chat/chat.component';
 import { SidenavListComponent } from './components/sidenav-list/sidenav-list.component';
 import {MatListModule} from "@angular/material/list";
+import {OAuthModule, provideOAuthClient} from "angular-oauth2-oidc";
 function initialize(http: HttpClient, config: ConfigService): (() => Promise<boolean>) {
   return (): Promise<boolean> => {
     return new Promise<boolean>((resolve: (a: boolean) => void): void => {
@@ -84,7 +84,6 @@ registerLocaleData(en);
   declarations: [
     AppComponent,
     HomeComponent,
-    NavComponent,
     LoginComponent,
     NotfoundComponent,
     ServerErrorComponent,
@@ -120,6 +119,7 @@ registerLocaleData(en);
     ReactiveFormsModule,
     NgxSpinnerModule,
     SocialLoginModule,
+    OAuthModule.forRoot(),
     TimeagoModule.forRoot(),
     TooltipModule.forRoot(),
     AlertModule.forRoot(),
@@ -137,8 +137,10 @@ registerLocaleData(en);
   ],
 
   providers: [
+    provideHttpClient(),
+    provideOAuthClient(),
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    //{ provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
     { provide: NZ_I18N, useValue: en_US }
   ],
