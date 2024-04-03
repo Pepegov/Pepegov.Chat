@@ -23,7 +23,7 @@ import Peer from "peerjs";
 })
 export class HomeComponent implements OnInit, OnDestroy {
   isMeeting: boolean;
-  currentUser: UserInfo;
+  currentUser: UserInfo | null;
   currentMember: Member;
   subscriptions = new Subscription();
   statusScreen: eMeet;
@@ -74,6 +74,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   roomId: string;
   myPeer: any;
   ngOnInit(): void {
+    const userInStorage = localStorage.getItem('user')
+    if(userInStorage){
+      this.currentUser = JSON.parse(userInStorage);
+      this.currentMember = { userName: this.currentUser.nickname, displayName: this.currentUser.name + ' ' + this.currentUser.family_name} as Member;
+    }
+    this.accountService.userProfileSubject.subscribe((userInfo) => {
+      this.currentUser = userInfo;
+      this.currentMember = { userName: this.currentUser.nickname, displayName: this.currentUser.name + ' ' + this.currentUser.family_name} as Member;
+    })
+
     this.isMeeting = true
     this.isRecorded = this.configService.isRecorded;//enable or disable recorded
 
@@ -95,12 +105,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     console.log("creating local stream...")
     this.createLocalStream()
     console.log("creating hub connection...")
-    this.accountService.userProfileSubject.subscribe((userInfo) => {this.currentUser = userInfo})
-    this.currentMember = { userName: this.currentUser.nickname, displayName: this.currentUser.name + ' ' + this.currentUser.family_name} as Member
+
     this.chatHub.createHubConnection(this.currentUser, this.roomId, this.accountService.getAccessToken())
 
-    console.log(this.currentUser);
-    console.log(this.currentMember)
+    console.log(`currentUser ${this.currentUser}`);
+    console.log(`currentMember ${this.currentMember}`)
     console.log("Current user login: "+ this.currentUser.nickname)
     this.myPeer = new Peer(this.currentUser.nickname, {
       config: {

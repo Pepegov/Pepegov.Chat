@@ -30,7 +30,7 @@ public class RoomEndPoint : ApplicationDefinition
     [ProducesResponseType(typeof(ApiResult<IPagedList<RoomViewModel>>), 200)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
-    //[Authorize(AuthenticationSchemes = AuthData.AuthenticationSchemes)]
+    [Authorize(AuthenticationSchemes = AuthData.AuthenticationSchemes)]
     private async Task<IResult> GetPagedRooms(
         HttpContext httpContext,
         [FromQuery] int pageIndex,

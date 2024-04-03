@@ -15,22 +15,22 @@ export class RoomService {
   constructor(private http: HttpClient, private accountService : OpenIdService) { }
 
   getRooms(pageIndex: number, pageSize: number){
-    return this.http.get<ApiResult<PagedList<Room>>>(this.baseUrl+'room/get-paged'+'?pageIndex='+pageIndex+'&pageSize='+pageSize,); //{ headers: this.accountService.authHeader() }
+    return this.http.get<ApiResult<PagedList<Room>>>(this.baseUrl+'room/get-paged'+'?pageIndex='+pageIndex+'&pageSize='+pageSize, { headers: this.accountService.authHeader() });
   }
 
   addRoom(name: string){
-    return this.http.post(this.baseUrl + 'room/add?name=' + name, {});
+    return this.http.post(this.baseUrl + 'room/add?name=' + name, {}, { headers: this.accountService.authHeader() });
   }
 
   editRoom(id: string, name: string){
-    return this.http.put(this.baseUrl + 'room?id='+ id +'&editName='+name, {})
+    return this.http.put(this.baseUrl + 'room?id='+ id +'&editName='+name, {}, { headers: this.accountService.authHeader() })
   }
 
   deleteRoom(id: string){
-    return this.http.delete(this.baseUrl+'room/'+id);
+    return this.http.delete(this.baseUrl+'room/'+id, { headers: this.accountService.authHeader() });
   }
 
   deleteAll(){
-    return this.http.delete(this.baseUrl+'room/delete-all');
+    return this.http.delete(this.baseUrl+'room/delete-all', { headers: this.accountService.authHeader() });
   }
 }

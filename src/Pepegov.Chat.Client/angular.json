@@ -70,8 +70,8 @@
         },
         "serve": {
           "options": {
-            "sslKey": "/opt/OpendIddict/cents/localhost.key",
-            "sslCert": "/opt/OpendIddict/cents/localhost.crt", 
+            "sslKey": "/opt/OpendIddict/cents//localhost.key",
+            "sslCert": "/opt/OpendIddict/cents//localhost.crt",
             "ssl": true,
             "proxyConfig": "src/proxy.conf.json"
           },

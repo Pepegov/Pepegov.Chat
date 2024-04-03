@@ -44,9 +44,12 @@ export class OpenIdService {
       oAuthService.tryLoginCodeFlow().then(() => {
         if (!oAuthService.hasValidAccessToken()) {
           oAuthService.initLoginFlow()
+          console.log("init login form")
         } else {
           oAuthService.loadUserProfile().then((userProfile) => {
+            console.log("load user info " + JSON.stringify(userProfile))
             this.userProfileSubject.next(userProfile as UserInfo)
+            localStorage.setItem('user', JSON.stringify(userProfile));
           })
         }
       })
@@ -55,6 +58,14 @@ export class OpenIdService {
 
   isLoggedId() : boolean {
     return this.oAuthService.hasValidAccessToken()
+  }
+
+  getUserInfo(): UserInfo | null {
+    this.oAuthService.loadUserProfile().then((userProfile) => {
+      return userProfile as UserInfo
+    });
+
+    return;
   }
 
   logout() {

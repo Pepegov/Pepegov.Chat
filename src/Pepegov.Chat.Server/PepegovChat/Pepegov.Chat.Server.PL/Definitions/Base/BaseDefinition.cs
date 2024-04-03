@@ -14,16 +14,16 @@ public class CommonDefinition : ApplicationDefinition
     public override async Task ConfigureApplicationAsync(IDefinitionApplicationContext context)
     {
         var app = context.Parse<WebDefinitionApplicationContext>().WebApplication;
-        //app.UseDefaultFiles();
-        //app.UseStaticFiles();
-        //app.UseHttpsRedirection();
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
+        app.UseHttpsRedirection();
         
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-            endpoints.MapHub<PresenceHub>("hubs/presence").WithOpenApi();
-            endpoints.MapHub<ChatHub>("hubs/chathub").WithOpenApi();
-        });
+        // app.UseEndpoints(endpoints =>
+        // {
+        //     endpoints.MapControllers();
+        //     endpoints.MapHub<PresenceHub>("hubs/presence").WithOpenApi();
+        //     endpoints.MapHub<ChatHub>("hubs/chathub").WithOpenApi();
+        // });
     }
 
     public override async Task ConfigureServicesAsync(IDefinitionServiceContext context)

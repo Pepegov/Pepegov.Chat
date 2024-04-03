@@ -12,7 +12,7 @@ public class SignalRDefinition : ApplicationDefinition
         var app = context.Parse<WebDefinitionApplicationContext>().WebApplication;
         // app.MapHub<PresenceHub>("hubs/presence").WithOpenApi();
         // app.MapHub<ChatHub>("hubs/chathub").WithOpenApi();
-        return base.ConfigureApplicationAsync(context);
+         return base.ConfigureApplicationAsync(context);
     }
 
     public override Task ConfigureServicesAsync(IDefinitionServiceContext context)

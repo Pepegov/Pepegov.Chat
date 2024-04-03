@@ -34,21 +34,22 @@ export class ChatHubService {
     private muteCamMicro: MuteCamMicService) { }
 
   createHubConnection(user: UserInfo, roomId: string, token : string){
+    console.log(`try connect to hub ${this.hubUrl+ 'chathub?roomId=' + roomId} | access token = ${token}`)
 
     this.hubConnection = new HubConnectionBuilder()
     .withUrl(this.hubUrl+ 'chathub?roomId=' + roomId, {
       skipNegotiation: true,
       transport: HttpTransportType.WebSockets,
-      accessTokenFactory: ()=> token
+      accessTokenFactory: () => token
     })
-    .configureLogging(LogLevel.Debug)
+    .configureLogging(LogLevel.Information)
     .withAutomaticReconnect()
     .build()
 
     console.log("hub connection start")
     this.hubConnection.start()
       .then(() => console.log("Connection started"))
-      .catch(err => console.log("fack " + err));
+      .catch(err => console.log("fuck " + err));
 
     // this.hubConnection.on('ReceiveMessageThread', messages => {
     //   this.messageThreadSource.next(messages);
