@@ -27,7 +27,7 @@ jobs:
                     file: ./src/Pepegov.Chat.Server/PepegovChat/Pepegov.Chat.Server.PL/Dockerfile
                     push: true
                     tags: |
-                        ${{ secrets.REGISTRY_URL }}/pepegov/chat.server:latest
+                        ${{ secrets.REGISTRY_URL }}/pepegov/chat/server:latest
                     secrets: |
                         "ASPNETCORE_ENVIRONMENT=Release"
                     build-args: |
@@ -56,7 +56,7 @@ jobs:
                     file: ./src/Pepegov.Chat.Client/Dockerfile
                     push: true
                     tags: |
-                        ${{ secrets.REGISTRY_URL }}/pepegov/chat.client:latest
+                        ${{ secrets.REGISTRY_URL }}/pepegov/chat/client:latest
     deploy:
         name: 'Deploy server'
         runs-on: ubuntu-latest
