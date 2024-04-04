@@ -17,6 +17,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "sdp"
+            ],
             "outputPath": "dist/pepegov.chat.client",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -46,13 +49,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "4kb",
+                  "maximumError": "8kb"
                 }
               ],
               "outputHashing": "all"
@@ -70,8 +73,8 @@
         },
         "serve": {
           "options": {
-            "sslKey": "/opt/OpendIddict/cents//localhost.key",
-            "sslCert": "/opt/OpendIddict/cents//localhost.crt",
+            "sslKey": "/opt/OpendIddict/cents/localhost.key",
+            "sslCert": "/opt/OpendIddict/cents/localhost.crt",
             "ssl": true,
             "proxyConfig": "src/proxy.conf.json"
           },
