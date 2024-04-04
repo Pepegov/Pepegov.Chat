@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'server/api/',
-  hubUrl: 'server/hubs/',
+  apiUrl: 'https://localhost:11011/api/',
+  hubUrl: 'https://localhost:11011/hubs/',
   identityUrl : "identity-app-1"
 };

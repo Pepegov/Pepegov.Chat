@@ -21,6 +21,6 @@ RUN dotnet publish "Pepegov.Chat.Server.PL.csproj" -c $BUILD_CONFIGURATION -o /a
 
 FROM base AS final
 WORKDIR /app
-ENV ASPNETCORE_URLS=https://+:11001;http://+:11000
+ENV ASPNETCORE_URLS=https://+:11011;http://+:11010
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Pepegov.Chat.Server.PL.dll"]
