@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:11010/api/',
-  hubUrl: 'http://localhost:11010/hubs/',
+  apiUrl: 'chat-server-1/api/',
+  hubUrl: 'chat-server-1/hubs/',
   identityUrl : "identity-app-1"
 };
