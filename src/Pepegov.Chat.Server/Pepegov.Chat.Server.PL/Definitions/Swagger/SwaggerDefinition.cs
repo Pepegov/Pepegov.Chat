@@ -21,10 +21,10 @@ public class SwaggerDefinition : ApplicationDefinition
     {
         var webContext = context.Parse<WebDefinitionApplicationContext>();
 
-        if (!webContext.WebApplication.Environment.IsDevelopment())
-        {
-            return;
-        }
+        // if (!webContext.WebApplication.Environment.IsDevelopment())
+        // {
+        //     return;
+        // }
 
         using var scope = webContext.WebApplication.Services.CreateAsyncScope();
         var client = scope.ServiceProvider.GetService<IOptions<IdentityClientOption>>()!.Value;
