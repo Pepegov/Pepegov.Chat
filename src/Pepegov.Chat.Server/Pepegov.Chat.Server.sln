@@ -1,10 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pepegov.Chat.Server.DAL", "PepegovChat\Pepegov.Chat.Server.DAL\Pepegov.Chat.Server.DAL.csproj", "{37B96C20-503B-4F68-98A4-0FB3245F7B76}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pepegov.Chat.Server.DAL", "Pepegov.Chat.Server.DAL\Pepegov.Chat.Server.DAL.csproj", "{37B96C20-503B-4F68-98A4-0FB3245F7B76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pepegov.Chat.Server.PL", "PepegovChat\Pepegov.Chat.Server.PL\Pepegov.Chat.Server.PL.csproj", "{42E9B57C-3596-4F3F-9900-FBE28A689095}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pepegov.Chat.Server.PL", "Pepegov.Chat.Server.PL\Pepegov.Chat.Server.PL.csproj", "{42E9B57C-3596-4F3F-9900-FBE28A689095}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pepegov.Chat.Server.BL", "PepegovChat\Pepegov.Chat.Server.BL\Pepegov.Chat.Server.BL.csproj", "{30B32820-285B-4F0E-B94E-B0F333CF31FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pepegov.Chat.Server.BL", "Pepegov.Chat.Server.BL\Pepegov.Chat.Server.BL.csproj", "{30B32820-285B-4F0E-B94E-B0F333CF31FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFolder", "SolutionFolder", "{43B5AEBC-C567-4722-8F59-B17206FB816A}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\.github\workflows\main.yml = ..\..\.github\workflows\main.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
