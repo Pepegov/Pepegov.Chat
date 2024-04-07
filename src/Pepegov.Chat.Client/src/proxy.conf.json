@@ -10,13 +10,13 @@
         }
     },
     "/api":{
-        "target": "http://localhost:8000/",
+        "target": "chat-server-1",
         "secure": false,
         "ws": true,
         "logLevel": "debug"
     },
     "/hubs/*":{
-        "target": "http://localhost:8000/",
+        "target": "chat-server-1",
         "secure": false,
         "ws": true,
         "logLevel": "debug"
