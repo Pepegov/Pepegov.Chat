@@ -19,12 +19,11 @@ jobs:
                     registry: ${{ secrets.REGISTRY_URL }}
                     username: ${{ secrets.REGISTRY_USERNAME }}
                     password: ${{ secrets.REGISTRY_TOKEN }}
-
             -   name: "Build"
                 uses: docker/build-push-action@v5
                 with:
                     context: ./src/Pepegov.Chat.Server
-                    file: ./src/Pepegov.Chat.Server/PepegovChat/Pepegov.Chat.Server.PL/Dockerfile
+                    file: ./src/Pepegov.Chat.Server/Pepegov.Chat.Server.PL/Dockerfile
                     push: true
                     tags: |
                         ${{ secrets.REGISTRY_URL }}/pepegov/chat.server:latest
