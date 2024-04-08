@@ -44,14 +44,16 @@ namespace Pepegov.Chat.Server.BL.Hubs
             _logger.LogInformation($"{nameof(OnConnectedAsync)}");
 
             var httpContext = Context.GetHttpContext();
-            var Id = httpContext.Request.Query["roomId"].ToString();
-            var IdGuid = Guid.Parse(Id);
+            var id = httpContext.Request.Query["roomId"].ToString();
+            var IdGuid = Guid.Parse(id);
             var userName = ClaimsHelper.GetValue<string>((ClaimsIdentity)Context.User.Identity, OpenIddictConstants.Claims.Name);            
 
             await _presenceTracker.UserConnected(new UserConnectionInfo(userName, IdGuid), Context.ConnectionId);
-
-            await Groups.AddToGroupAsync(Context.ConnectionId, Id);
+            _logger.LogInformation($"Connected user {userName} with id {IdGuid} to {nameof(ChatHub)}");
+            
+            await Groups.AddToGroupAsync(Context.ConnectionId, id, cancellationToken: Context.ConnectionAborted);
             await AddConnectionToGroup(IdGuid); 
+            _logger.LogInformation($"Add connection {Context.ConnectionId} to group {id}");
             
             //var usersOnline = await _unitOfWork.UserRepository.GetUsersOnlineAsync(currentUsers);
             //var oneUserOnline = await _roomService.GetMemberAsync(userName);
@@ -64,13 +66,14 @@ namespace Pepegov.Chat.Server.BL.Hubs
                 locked = false
             };
             
-            await Clients.Group(Id).SendAsync("UserOnlineInGroup", oneUserOnline);
+            _logger.LogInformation($"Send {HubEvents.UserOnlineInGroup} event for user id {id}");
+            await Clients.Group(id).SendAsync(HubEvents.UserOnlineInGroup, oneUserOnline);
             
             var currentUsers = await _presenceTracker.GetOnlineUsers(IdGuid);
             await _roomService.UpdateMemberCountAsync(IdGuid, currentUsers.Length);
             
             var currentConnections = await _presenceTracker.GetConnectionsForUser(new UserConnectionInfo(userName, IdGuid));
-            await _presenceHub.Clients.AllExcept(currentConnections).SendAsync("CountMemberInGroup",
+            await _presenceHub.Clients.AllExcept(currentConnections).SendAsync(HubEvents.CountMemberInGroup,
                    new { Id = IdGuid, countMember = currentUsers.Length });
             
             var userIsSharing = await _shareScreenTracker.GetUserIsSharing(IdGuid);
@@ -78,8 +81,8 @@ namespace Pepegov.Chat.Server.BL.Hubs
             {
                 var currentBeginConnectionsUser = await _presenceTracker.GetConnectionsForUser(userIsSharing);
                 if(currentBeginConnectionsUser.Count > 0)
-                    await Clients.Clients(currentBeginConnectionsUser).SendAsync("OnShareScreenLastUser", new { usernameTo = userName, isShare = true });
-                await Clients.Caller.SendAsync("OnUserIsSharing", userIsSharing.UserName);
+                    await Clients.Clients(currentBeginConnectionsUser).SendAsync(HubEvents.OnShareScreenLastUser, new { usernameTo = userName, isShare = true });
+                await Clients.Caller.SendAsync(HubEvents.OnUserIsSharing, userIsSharing.UserName);
             }
         }
         public override async Task OnDisconnectedAsync(Exception exception)
@@ -103,13 +106,13 @@ namespace Pepegov.Chat.Server.BL.Hubs
                     photoUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F75%2Faa%2F2a%2F75aa2a9195f30342fe6d57577d986485.jpg&f=1&nofb=1&ipt=ece4736f8a3ed762addda4e63d61f9a61068540d57b550addf4c41af14cf9411&ipo=images",
                     locked = false
                 };
-                await Clients.Group(group.Id.ToString()).SendAsync("UserOfflineInGroup", user);
+                await Clients.Group(group.Id.ToString()).SendAsync(HubEvents.UserOfflineInGroup, user);
 
                 var currentUsers = await _presenceTracker.GetOnlineUsers(group.Id);
 
                 await _roomService.UpdateMemberCountAsync(group.Id, currentUsers.Length, Context.ConnectionAborted);
                 
-                await _presenceHub.Clients.All.SendAsync("CountMemberInGroup",
+                await _presenceHub.Clients.All.SendAsync(HubEvents.CountMemberInGroup,
                        new { Id = group.Id, countMember = currentUsers.Length });
             }
             await base.OnDisconnectedAsync(exception);

@@ -4,7 +4,7 @@ namespace Pepegov.Chat.Server.BL.Hubs
 {
     public class PresenceTracker
     {
-        private static readonly Dictionary<UserConnectionInfo, List<string>> OnlineUsers = new Dictionary<UserConnectionInfo, List<string>>();
+        private static readonly Dictionary<UserConnectionInfo, List<string>?> OnlineUsers = new Dictionary<UserConnectionInfo, List<string>?>();
 
         public Task<bool> UserConnected(UserConnectionInfo user, string connectionId)
         {
@@ -13,14 +13,14 @@ namespace Pepegov.Chat.Server.BL.Hubs
             {
                 var temp = OnlineUsers.FirstOrDefault(x => x.Key.UserName == user.UserName && x.Key.RoomId == user.RoomId);
                 
-                if(temp.Key == null)//chua co online
+                if(temp.Key == null)
                 {
                     OnlineUsers.Add(user, new List<string> { connectionId });
                     isOnline = true;
                 }
-                else if (OnlineUsers.ContainsKey(temp.Key))
+                else if (OnlineUsers.TryGetValue(temp.Key, out var onlineUser))
                 {
-                    OnlineUsers[temp.Key].Add(connectionId);
+                    onlineUser.Add(connectionId);
                 }
             }
 
@@ -58,9 +58,9 @@ namespace Pepegov.Chat.Server.BL.Hubs
             return Task.FromResult(onlineUsers);
         }
 
-        public Task<List<string>> GetConnectionsForUser(UserConnectionInfo user)
+        public Task<List<string>?> GetConnectionsForUser(UserConnectionInfo user)
         {
-            List<string> connectionIds = new List<string>();
+            List<string>? connectionIds = new List<string>();
             lock (OnlineUsers)
             {                
                 var temp = OnlineUsers.SingleOrDefault(x => x.Key.UserName == user.UserName && x.Key.RoomId == user.RoomId);
@@ -83,7 +83,8 @@ namespace Pepegov.Chat.Server.BL.Hubs
                 {
                     foreach(var user in listTemp)
                     {
-                        connectionIds.AddRange(user.Value);
+                        if (user.Value != null) 
+                            connectionIds.AddRange(user.Value);
                     }
                 }
             }

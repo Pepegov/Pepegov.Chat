@@ -99,7 +99,9 @@ public class RoomService : IRoomService
     public async Task<Room> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var roomRepository = _unitOfWorkInstance.GetRepository<Room>();
-        var entity =await roomRepository.GetFirstOrDefaultAsync(predicate: x => x.Id == id, disableTracking: false);
+        var entity =await roomRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.Id == id, disableTracking: false, 
+            cancellationToken: cancellationToken);
         if (entity is null)
         {
             var notFoundMessage = $"Room by id {id} not found";
@@ -115,7 +117,8 @@ public class RoomService : IRoomService
         var roomRepository = _unitOfWorkInstance.GetRepository<Room>();
         var entity= await roomRepository.GetFirstOrDefaultAsync(
             include: x => x.Include(i => i.Connections),
-            predicate: x => x.Connections.Any(c => c.ConnectionId == connectionId));
+            predicate: x => x.Connections.Any(c => c.ConnectionId == connectionId), 
+            cancellationToken: cancellationToken);
 
         if (entity is null)
         {
