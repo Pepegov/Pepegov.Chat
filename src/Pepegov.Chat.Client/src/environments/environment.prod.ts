@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://server/api',
-  hubUrl: 'http://server:11010/hubs',
-  identityUrl : "identity-app-1"
+  apiUrl: 'https://api.chat.pepegov.ru/api/',
+  hubUrl: 'wss://api.chat.pepegov.ru/hubs/',
+  identityUrl : "https://identity.pepegov.ru/",
 };

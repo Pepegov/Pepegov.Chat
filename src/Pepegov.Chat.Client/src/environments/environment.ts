@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://api.chat.pepegov.ru/api/',
-  hubUrl: 'wss://api.chat.pepegov.ru/hubs/',
-  identityUrl : "https://identity.pepegov.ru/",
+  apiUrl: 'https://localhost:8001/api/',
+  hubUrl: 'wss://localhost:8001/hubs/',
+  identityUrl : "https://localhost:10001/",
 };
