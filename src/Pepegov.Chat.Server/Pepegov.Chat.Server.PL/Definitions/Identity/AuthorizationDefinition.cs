@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Server.AspNetCore;
 using Pepegov.Chat.Server.BL.Hubs;
+using Pepegov.Chat.Server.DAL.Domain;
 using Pepegov.Chat.Server.PL.Definitions.OpenIddict;
 using Pepegov.Chat.Server.PL.Definitions.Options.Models;
 using Pepegov.MicroserviceFramework.AspNetCore.WebApplicationDefinition;
@@ -101,7 +102,7 @@ public class AuthorizationDefinition : ApplicationDefinition
         var app = context.Parse<WebDefinitionApplicationContext>().WebApplication;
 
         //app.UseHttpsRedirection();
-        app.UseRouting();
+        app.UseRouting(); 
         //app.UseCors(AppData.PolicyName);
         app.UseCors(c => c.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
         app.UseAuthentication();

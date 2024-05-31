@@ -13,6 +13,6 @@ public class DatabaseSeedingDefinition : ApplicationDefinition
         using var scope = context.ServiceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>()!;
 
-        await new DAL.Database.DatabaseInitializer(context.ServiceProvider, dbContext).SeedAsync();
+        //await new DAL.Database.DatabaseInitializer(context.ServiceProvider, dbContext).SeedAsync();
     }
 }

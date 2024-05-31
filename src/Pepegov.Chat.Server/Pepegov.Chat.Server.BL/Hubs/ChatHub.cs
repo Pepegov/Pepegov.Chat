@@ -57,13 +57,9 @@ namespace Pepegov.Chat.Server.BL.Hubs
             
             //var usersOnline = await _unitOfWork.UserRepository.GetUsersOnlineAsync(currentUsers);
             //var oneUserOnline = await _roomService.GetMemberAsync(userName);
-            var oneUserOnline = new
+            var oneUserOnline = new UserInfo()
             {
-                userName = userName,
-                displayName = userName,
-                lastActive = DateTime.UtcNow,
-                photoUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F75%2Faa%2F2a%2F75aa2a9195f30342fe6d57577d986485.jpg&f=1&nofb=1&ipt=ece4736f8a3ed762addda4e63d61f9a61068540d57b550addf4c41af14cf9411&ipo=images",
-                locked = false
+                Nickname = userName
             };
             
             _logger.LogInformation($"Send {HubEvents.UserOnlineInGroup} event for user id {id}");
@@ -98,13 +94,9 @@ namespace Pepegov.Chat.Server.BL.Hubs
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, group.Id.ToString());
                 //TODO
                 //var temp = await _unitOfWork.UserRepository.GetMemberAsync(userName);
-                var user = new
+                var user = new UserInfo()
                 {
-                    userName = userName,
-                    displayName = userName,
-                    lastActive = DateTime.UtcNow,
-                    photoUrl = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F75%2Faa%2F2a%2F75aa2a9195f30342fe6d57577d986485.jpg&f=1&nofb=1&ipt=ece4736f8a3ed762addda4e63d61f9a61068540d57b550addf4c41af14cf9411&ipo=images",
-                    locked = false
+                    Nickname = userName,
                 };
                 await Clients.Group(group.Id.ToString()).SendAsync(HubEvents.UserOfflineInGroup, user);
 
