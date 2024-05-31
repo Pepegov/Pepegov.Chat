@@ -3,6 +3,7 @@ import {AuthConfig, OAuthService} from "angular-oauth2-oidc";
 import {Observable, Subject} from "rxjs";
 import {environment} from "../../environments/environment";
 import {HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest} from "@angular/common/http";
+import {AccountService} from "./account.service";
 
 const oAuthConfig: AuthConfig = {
   issuer: environment.identityUrl,
@@ -30,6 +31,10 @@ export interface UserInfo {
   role: string[] | null
 }
 
+interface LoadedUserInfo {
+  info: UserInfo
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -40,16 +45,17 @@ export class OpenIdService {
   constructor(private readonly oAuthService: OAuthService) {
     oAuthService.configure(oAuthConfig)
     oAuthService.logoutUrl = environment.identityUrl + "connect/logout"
+    oAuthService.userinfoEndpoint = environment.identityUrl + "connect/userinfo"
     oAuthService.loadDiscoveryDocument().then(() => {
       oAuthService.tryLoginCodeFlow().then(() => {
         if (!oAuthService.hasValidAccessToken()) {
           oAuthService.initLoginFlow()
           console.log("init login form")
         } else {
-          oAuthService.loadUserProfile().then((userProfile) => {
+          oAuthService.loadUserProfile().then((userProfile:LoadedUserInfo) => {
             console.log("load user info " + JSON.stringify(userProfile))
-            this.userProfileSubject.next(userProfile as UserInfo)
-            localStorage.setItem('user', JSON.stringify(userProfile));
+            this.userProfileSubject.next(userProfile.info as UserInfo)
+            localStorage.setItem('user', JSON.stringify(userProfile.info as UserInfo));
           })
         }
       })

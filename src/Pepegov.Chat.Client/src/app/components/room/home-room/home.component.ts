@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TabDirective } from 'ngx-bootstrap/tabs';
 import { Subscription } from 'rxjs';
 import { eMeet } from '../../../models/chat/eMeeting';
-import { Member } from '../../../models/chat/member';
 import { VideoElement } from '../../../models/chat/video-element';
 import { ChatHubService } from '../../../services/chat-hub.service';
 import { MessageCountStreamService } from '../../../services/message-count-stream.service';
@@ -15,6 +14,7 @@ import { UtilityStreamService } from '../../../services/utility-stream.service';
 import {ChatComponent} from "../chat/chat.component";
 import {OpenIdService, UserInfo} from "../../../services/openid.service";
 import Peer from "peerjs";
+import {User} from "../../../models/authorization/user";
 
 @Component({
   selector: 'app-home',
@@ -24,7 +24,6 @@ import Peer from "peerjs";
 export class HomeComponent implements OnInit, OnDestroy {
   isMeeting: boolean;
   currentUser: UserInfo | null;
-  currentMember: Member;
   subscriptions = new Subscription();
   statusScreen: eMeet;
   shareScreenPeer: any;
@@ -54,15 +53,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     private messageCountService: MessageCountStreamService,
     private accountService: OpenIdService,
     private chatComponent : ChatComponent) {
-
-    this.accountService.userProfileSubject.subscribe(user => {
-      if (user) {
-        this.currentUser = user;
-        this.currentMember = { userName: user.nickname, displayName: user.name + ' ' + user.family_name} as Member
-        console.log("Current member")
-        console.log(this.currentMember)
-      }
-    })
   }
 
   @HostListener('window:beforeunload', ['$event']) unloadNotification($event: any) {
@@ -72,17 +62,20 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   roomId: string;
-  myPeer: any;
+  myPeer: Peer;
   ngOnInit(): void {
     const userInStorage = localStorage.getItem('user')
     if(userInStorage){
-      this.currentUser = JSON.parse(userInStorage);
-      this.currentMember = { userName: this.currentUser.nickname, displayName: this.currentUser.name + ' ' + this.currentUser.family_name} as Member;
+      const user = JSON.parse(userInStorage)
+      this.currentUser = user as UserInfo;
+      console.log("user in storage: ")
+      console.log(this.currentUser)
     }
-    this.accountService.userProfileSubject.subscribe((userInfo) => {
-      this.currentUser = userInfo;
-      this.currentMember = { userName: this.currentUser.nickname, displayName: this.currentUser.name + ' ' + this.currentUser.family_name} as Member;
-    })
+    else{
+      this.accountService.userProfileSubject.subscribe((userInfo) => {
+        this.currentUser = userInfo;
+      })
+    }
 
     this.isMeeting = true
     this.isRecorded = this.configService.isRecorded;//enable or disable recorded
@@ -108,8 +101,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.chatHub.createHubConnection(this.currentUser, this.roomId, this.accountService.getAccessToken())
 
-    console.log(`currentUser ${this.currentUser}`);
-    console.log(`currentMember ${this.currentMember}`)
+    console.log(`currentUser ${JSON.stringify(this.currentUser)}`);
     console.log("Current user login: "+ this.currentUser.nickname)
     this.myPeer = new Peer(this.currentUser.nickname, {
       config: {
@@ -174,11 +166,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.subscriptions.add(
       this.chatHub.oneOnlineUser$.subscribe(member => {
-        if (this.currentUser.nickname !== member.userName) {
+        if (this.currentUser.nickname !== member.nickname) {
           // Let some time for new peers to be able to answer
           setTimeout(() => {
-            const call = this.myPeer.call(member.userName, this.stream, {
-              metadata: { user: this.currentMember },
+            const call = this.myPeer.call(member.nickname, this.stream, {
+              metadata: { user: this.currentUser },
             });
             call.on('stream', (otherUserVideoStream: MediaStream) => {
               console.log("call.on('stream', (otherUserVideoStream: MediaStream) in this.subscriptions.add(")
@@ -187,10 +179,13 @@ export class HomeComponent implements OnInit, OnDestroy {
             });
 
             call.on('close', () => {
-              this.videos = this.videos.filter((video) => video.user.userName !== member.userName);
-              this.tempvideos = this.tempvideos.filter(video => video.user.userName !== member.userName);
+              this.videos = this.videos.filter((video) => video.user.nickname !== member.nickname);
+              this.tempvideos = this.tempvideos.filter(video => video.user.nickname !== member.nickname);
             });
           }, 1000);
+        }
+        else {
+          console.log("username == nickname. nickname:" + this.currentUser.nickname + " username: " + member.nickname)
         }
       })
     );
@@ -198,8 +193,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     console.log("Leght of videos " + this.videos.length)
 
     this.subscriptions.add(this.chatHub.oneOfflineUser$.subscribe(member => {
-      this.videos = this.videos.filter(video => video.user.userName !== member.userName);
-      this.tempvideos = this.tempvideos.filter(video => video.user.userName !== member.userName);
+      this.videos = this.videos.filter(video => video.user.nickname !== member.nickname);
+      this.tempvideos = this.tempvideos.filter(video => video.user.nickname !== member.nickname);
     }));
 
     console.log("Leght of videos " + this.videos.length)
@@ -240,17 +235,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
    addMyVideo(stream: MediaStream) {
-    const myMember = { userName: this.currentUser.nickname, displayName: this.currentUser.name } as Member
-    console.log("my member username " + myMember.userName + " dispalyName " + myMember.displayName)
     this.videos.push({
       muted: true,
       srcObject: stream,
-      user: { userName: this.currentUser.nickname, displayName: this.currentUser.name } as Member,
+      user: this.currentUser,
     });
   }
 
-  addOtherUserVideo(user: Member, stream: MediaStream) {
-    const alreadyExisting = this.videos.some(video => video.user.userName === user.userName);
+  addOtherUserVideo(user: UserInfo, stream: MediaStream) {
+    const alreadyExisting = this.videos.some(video => video.user.nickname === user.nickname);
     console.log("add addOtherUserVideo. alreadyExisting:" + alreadyExisting)
     console.log(user)
     if (alreadyExisting) {
@@ -328,7 +321,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.enableShareScreen = false;
 
       this.videos.forEach(v => {
-        const call = this.shareScreenPeer.call('share_' + v.user.userName, mediaStream);
+        const call = this.shareScreenPeer.call('share_' + v.user.nickname, mediaStream);
         //call.on('stream', (otherUserVideoStream: MediaStream) => { });
       })
 

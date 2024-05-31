@@ -24,13 +24,13 @@ export class VideoBoxUserComponent implements OnInit, OnDestroy {
     this.enableCamera = this.userVideo.srcObject.getVideoTracks()[0] ? this.userVideo.srcObject.getVideoTracks()[0].enabled : false
 
     this.subscriptions.add(this.muteService.muteCamera$.subscribe(data=>{
-      if(this.userVideo.user.userName === data.username){
+      if(this.userVideo.user.nickname === data.username){
         this.enableCamera = data.mute
       }
     }))
 
     this.subscriptions.add(this.muteService.muteMicro$.subscribe(data=>{
-      if(this.userVideo.user.userName === data.username){
+      if(this.userVideo.user.nickname === data.username){
         this.enableMicro = data.mute
       }
     }))

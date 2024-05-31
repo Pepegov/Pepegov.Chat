@@ -4,7 +4,6 @@ import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { Member } from '../models/chat/member';
 import { Message } from '../models/chat/message';
 import { MessageCountStreamService } from './message-count-stream.service';
 import { MuteCamMicService } from './mute-cam-mic.service';
@@ -20,10 +19,10 @@ export class ChatHubService {
   //private onlineUsersSource = new BehaviorSubject<Member[]>([]);
   //onlineUsers$ = this.onlineUsersSource.asObservable();
 
-  private oneOnlineUserSource = new Subject<Member>();
+  private oneOnlineUserSource = new Subject<UserInfo>();
   oneOnlineUser$ = this.oneOnlineUserSource.asObservable();
 
-  private oneOfflineUserSource = new Subject<Member>();
+  private oneOfflineUserSource = new Subject<UserInfo>();
   oneOfflineUser$ = this.oneOfflineUserSource.asObservable();
 
   private messagesThreadSource = new BehaviorSubject<Message[]>([]);
@@ -68,19 +67,22 @@ export class ChatHubService {
     })
 
     console.log("subs to UserOnlineInGroup")
-    this.hubConnection.on('UserOnlineInGroup', (user: Member) => {
+    this.hubConnection.on('UserOnlineInGroup', (user: UserInfo) => {
       //this.onlineUsersSource.next(users);
       this.oneOnlineUserSource.next(user);
-      this.toastr.success(user.displayName + ' has join room!')
+      this.toastr.success(user.nickname + ' has join room!')
+      console.log(user.nickname + ' has join room!');
+      console.log(user)
     })
 
     console.log("subs to UserOfflineInGroup")
-    this.hubConnection.on('UserOfflineInGroup', (user: Member) => {
+    this.hubConnection.on('UserOfflineInGroup', (user: UserInfo) => {
       // this.onlineUsers$.pipe(take(1)).subscribe(users => {
       //   this.onlineUsersSource.next([...users.filter(x => x.userName !== user.userName)])
       // })
       this.oneOfflineUserSource.next(user);
-      this.toastr.warning(user.displayName + ' has left room!')
+      this.toastr.warning(user.name + ' has left room!')
+      console.log(user.name + ' has left room!')
     })
 
     console.log("subs to OnMuteMicro")
