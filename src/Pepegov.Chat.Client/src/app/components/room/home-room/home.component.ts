@@ -14,7 +14,6 @@ import { UtilityStreamService } from '../../../services/utility-stream.service';
 import {ChatComponent} from "../chat/chat.component";
 import {OpenIdService, UserInfo} from "../../../services/openid.service";
 import Peer from "peerjs";
-import {User} from "../../../models/authorization/user";
 
 @Component({
   selector: 'app-home',
@@ -22,12 +21,11 @@ import {User} from "../../../models/authorization/user";
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
+  @ViewChild('videoPlayer') localVideoPlayer: ElementRef;
   isMeeting: boolean;
   currentUser: UserInfo | null;
   subscriptions = new Subscription();
-  statusScreen: eMeet;
   shareScreenPeer: any;
-  @ViewChild('videoPlayer') localVideoPlayer: ElementRef;
   shareScreenStream: any;
   enableShareScreen = true;// enable or disable button sharescreen
   isStopRecord = false;
@@ -35,12 +33,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   videos: VideoElement[] = [];
   isRecorded: boolean;
   userIsSharing: string;
-  testVideos: [
-    "123",
-    "355",
-    "qwe",
-    "asd"
-  ];
 
   constructor(private chatHub: ChatHubService,
     private shareScreenService: MuteCamMicService,
@@ -64,18 +56,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   roomId: string;
   myPeer: Peer;
   ngOnInit(): void {
-    const userInStorage = localStorage.getItem('user')
-    if(userInStorage){
-      const user = JSON.parse(userInStorage)
-      this.currentUser = user as UserInfo;
-      console.log("user in storage: ")
-      console.log(this.currentUser)
-    }
-    else{
-      this.accountService.userProfileSubject.subscribe((userInfo) => {
-        this.currentUser = userInfo;
-      })
-    }
+    this.getCurrentUser()
 
     this.isMeeting = true
     this.isRecorded = this.configService.isRecorded;//enable or disable recorded
@@ -85,7 +66,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       const enableShareScreen = JSON.parse(shareScreen)
       if (enableShareScreen) {// != null
         this.enableShareScreen = enableShareScreen
-    }
+      }
     }
 
     const id = this.route.snapshot.paramMap.get('id')
@@ -95,118 +76,28 @@ export class HomeComponent implements OnInit, OnDestroy {
       console.log("roomId: ", this.roomId)
     }
 
-    console.log("creating local stream...")
     this.createLocalStream()
-    console.log("creating hub connection...")
 
     this.chatHub.createHubConnection(this.currentUser, this.roomId, this.accountService.getAccessToken())
 
-    console.log(`currentUser ${JSON.stringify(this.currentUser)}`);
-    console.log("Current user login: "+ this.currentUser.nickname)
-    this.myPeer = new Peer(this.currentUser.nickname, {
-      config: {
-        'iceServers': [{
-          urls: "stun:stun.l.google.com:19302",
-        },{
-          urls:"turn:numb.viagenie.ca",
-          username:"webrtc@live.com",
-          credential:"muazkh"
-        }]
-      }
-    });
+    this.configureUserPeer()
 
-    //open new user peer
-    this.myPeer.on('open', (userId:any) => {
-      console.log("open new user peer " + userId)
-    });
+    this.configureShareScreenPeer()
 
-    this.shareScreenPeer = new Peer('share_' + this.currentUser.nickname, {
-      config: {
-        'iceServers': [{
-          urls: "stun:stun.l.google.com:19302",
-        },{
-          urls:"turn:numb.viagenie.ca",
-          username:"webrtc@live.com",
-          credential:"muazkh"
-        }]
-      }
-    })
+    this.callGroup()
 
-    console.log("open new share screen peer")
-    this.shareScreenPeer.on('call', (call : any) => {
-      call.answer(this.shareScreenStream);
-      call.on('stream', (otherUserVideoStream: MediaStream) => {
-        console.log("chare screen peer")
-        this.shareScreenStream = otherUserVideoStream;
-      });
+    this.subscribeUsers()
 
-      call.on('error', (err : any) => {
-        console.error("open new share screen peer error" + err);
-      })
-    });
+    this.subscribeShareScreens()
+  }
 
-    //call group
-    console.log("call group start")
-    this.myPeer.on('call', (call : any) => {
-      console.log("this.myPeer.on(call)")
-      call.answer(this.stream);
-
-      call.on('stream', (otherUserVideoStream: MediaStream) => {
-        //this.addMyVideo(this.stream)
-        console.log("call.on('stream', (otherUserVideoStream: MediaStream) in this.myPeer.on('call'")
-        console.log(call)
-        this.addOtherUserVideo(call.metadata.user, otherUserVideoStream);
-      });
-
-      call.on('error', (err : any) => {
-        console.error("call group error" + err);
-      })
-    });
-    console.log("call group end")
-
-    this.subscriptions.add(
-      this.chatHub.oneOnlineUser$.subscribe(member => {
-        if (this.currentUser.nickname !== member.nickname) {
-          // Let some time for new peers to be able to answer
-          setTimeout(() => {
-            const call = this.myPeer.call(member.nickname, this.stream, {
-              metadata: { user: this.currentUser },
-            });
-            call.on('stream', (otherUserVideoStream: MediaStream) => {
-              console.log("call.on('stream', (otherUserVideoStream: MediaStream) in this.subscriptions.add(")
-              console.log(member)
-              this.addOtherUserVideo(member, otherUserVideoStream);
-            });
-
-            call.on('close', () => {
-              this.videos = this.videos.filter((video) => video.user.nickname !== member.nickname);
-              this.tempvideos = this.tempvideos.filter(video => video.user.nickname !== member.nickname);
-            });
-          }, 1000);
-        }
-        else {
-          console.log("username == nickname. nickname:" + this.currentUser.nickname + " username: " + member.nickname)
-        }
-      })
-    );
-
-    console.log("Leght of videos " + this.videos.length)
-
-    this.subscriptions.add(this.chatHub.oneOfflineUser$.subscribe(member => {
-      this.videos = this.videos.filter(video => video.user.nickname !== member.nickname);
-      this.tempvideos = this.tempvideos.filter(video => video.user.nickname !== member.nickname);
-    }));
-
-    console.log("Leght of videos " + this.videos.length)
-
+  subscribeShareScreens(){
     this.subscriptions.add(
       this.shareScreenService.shareScreen$.subscribe(val => {
         if (val) {//true = share screen
-          this.statusScreen = eMeet.SHARESCREEN
           this.enableShareScreen = false;
           localStorage.setItem('share-screen', JSON.stringify(this.enableShareScreen));
         } else {// false = stop share
-          this.statusScreen = eMeet.NONE
           this.enableShareScreen = true;
           localStorage.setItem('share-screen', JSON.stringify(this.enableShareScreen));
         }
@@ -234,11 +125,82 @@ export class HomeComponent implements OnInit, OnDestroy {
     }))
   }
 
-   addMyVideo(stream: MediaStream) {
-    this.videos.push({
-      muted: true,
-      srcObject: stream,
-      user: this.currentUser,
+  subscribeUsers(){
+    this.subscriptions.add(
+      this.chatHub.oneOnlineUser$.subscribe(member => {
+        if (this.currentUser.nickname !== member.nickname) {
+          // Let some time for new peers to be able to answer
+          setTimeout(() => {
+            const call = this.myPeer.call(member.nickname, this.stream, {
+              metadata: { user: this.currentUser },
+            });
+            call.on('stream', (otherUserVideoStream: MediaStream) => {
+              this.addOtherUserVideo(member, otherUserVideoStream);
+            });
+
+            call.on('close', () => {
+              this.videos = this.videos.filter((video) => video.user.nickname !== member.nickname);
+              this.tempvideos = this.tempvideos.filter(video => video.user.nickname !== member.nickname);
+            });
+          }, 1000);
+        }
+      })
+    );
+
+    this.subscriptions.add(this.chatHub.oneOfflineUser$.subscribe(member => {
+      this.videos = this.videos.filter(video => video.user.nickname !== member.nickname);
+      this.tempvideos = this.tempvideos.filter(video => video.user.nickname !== member.nickname);
+    }));
+  }
+
+  callGroup() {
+    this.myPeer.on('call', (call : any) => {
+      call.answer(this.stream);
+      call.on('stream', (otherUserVideoStream: MediaStream) => {
+        this.addOtherUserVideo(call.metadata.user, otherUserVideoStream);
+      });
+      call.on('error', (err : any) => {
+        console.error("call group error" + err);
+      })
+    });
+  }
+
+  configureShareScreenPeer(){
+    this.shareScreenPeer = new Peer('share_' + this.currentUser.nickname, {
+      config: {
+        'iceServers': [
+          { urls: 'stun:freeturn.net:5349' },
+          { urls: 'turns:freeturn.tel:5349', username: 'free', credential: 'free' }
+        ]
+      }
+    })
+
+    this.shareScreenPeer.on('call', (call : any) => {
+      call.answer(this.shareScreenStream);
+      call.on('stream', (otherUserVideoStream: MediaStream) => {
+        console.log("share screen peer")
+        this.shareScreenStream = otherUserVideoStream;
+      });
+
+      call.on('error', (err : any) => {
+        console.error("open new share screen peer error" + err);
+      })
+    });
+  }
+
+  configureUserPeer(){
+    this.myPeer = new Peer(this.currentUser.nickname, {
+      config: {
+        'iceServers': [
+          { urls: 'stun:freeturn.net:5349' },
+          { urls: 'turns:freeturn.tel:5349', username: 'free', credential: 'free' }
+        ]
+      }
+    });
+
+    //open new user peer
+    this.myPeer.on('open', (userId:any) => {
+      console.log("open new user peer " + userId)
     });
   }
 
@@ -258,16 +220,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
 
 
-    if(this.videos.length <= this.maxUserDisplay){
-      this.tempvideos.push({
-        muted: false,
-        srcObject: stream,
-        user: user
-      })
-    }
+    this.tempvideos.push({
+      muted: false,
+      srcObject: stream,
+      user: user
+    })
   }
 
-  maxUserDisplay = 8; // chi hien toi da la 8 user
   tempvideos: VideoElement[] = [];
 
   stream: any;
@@ -312,6 +271,22 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
+  getCurrentUser() {
+    const userInStorage = localStorage.getItem('user')
+    if(userInStorage){
+      const user = JSON.parse(userInStorage)
+      this.currentUser = user as UserInfo;
+      console.log("user in storage: ")
+      console.log(this.currentUser)
+    }
+    else{
+      this.accountService.userProfileSubject.subscribe((userInfo) => {
+        this.currentUser = userInfo;
+      })
+    }
+
+  }
+
   async shareScreen() {
     try {
       // @ts-ignore
@@ -352,16 +327,25 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  /*   getTURNServer(): any{
-      return { 'iceServers': [
-        { url:'stun:stun.12voip.com:3478'}
-     ] };
-    } */
+
+  getGridCols(): number {
+    const userCount = this.tempvideos.length;
+    if(userCount === 0){
+      return 1;
+    }
+    else if (userCount <= 3) {
+      return 2;
+    } else if (userCount <= 4) {
+      return 3;
+    } else {
+      return 4;
+    }
+  }
 
   ngOnDestroy() {
     this.isMeeting = false;
-    this.myPeer.disconnect();//dong ket noi nhung van giu nguyen cac ket noi khac
-    this.shareScreenPeer.destroy();//dong tat ca cac ket noi
+    this.myPeer.disconnect();
+    this.shareScreenPeer.destroy();
     this.chatHub.stopHubConnection();
     this.subscriptions.unsubscribe();
     localStorage.removeItem('share-screen');

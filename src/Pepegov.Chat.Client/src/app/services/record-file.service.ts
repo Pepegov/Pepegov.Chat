@@ -30,9 +30,11 @@ export class RecordFileService {
       console.log('Recorded Blobs: ', this.recordedBlobs);
     };
     this.mediaRecorder.ondataavailable = (event : any)=>{
-      //console.log('handleDataAvailable', event);
       if (event.data && event.data.size > 0) {
-        this.recordedBlobs.push(event.data);        
+        if(!this.recordedBlobs){
+          this.recordedBlobs = []
+        }
+        this.recordedBlobs.push(event.data);
       }
     };
     this.mediaRecorder.start();
@@ -45,7 +47,7 @@ export class RecordFileService {
   upLoadOnServer(){
     const blob = new Blob(this.recordedBlobs);
     this.formData.append('video-blob', blob);
-    return this.http.post(this.baseUrl+'RecordVideo', this.formData);
+    return this.http.post(this.baseUrl+'record-video', this.formData);
   }
 
   /* getSupportedMimeTypes() {

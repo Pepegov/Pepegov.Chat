@@ -17,7 +17,7 @@ public static class AppData
 
     /// <summary>
     /// Current service description
-    /// </summary>
+    /// </summary>e
     public const string ServiceDescription = "Microservice Template";
 
     /// <summary>

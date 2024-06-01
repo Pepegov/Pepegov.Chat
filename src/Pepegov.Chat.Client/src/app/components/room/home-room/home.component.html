@@ -4,9 +4,9 @@
           <div style="margin-bottom: 1%; display: flex; gap: 1%">
             <button mat-flat-button
                     (click)="StartRecord()"
-                    *ngIf="isRecorded"
+                    *ngIf="!isRecorded"
                     [ngClass]="isStopRecord ? ['fa-stop']:['fa-record-vinyl red']">
-              Start record</button>
+              {{textStopRecord}}</button>
             <button mat-flat-button
                     (click)="enableOrDisableAudio()"
                     [ngClass]="enableAudio ? ['fa-microphone']:['fa-microphone-slash']">
@@ -16,7 +16,6 @@
                     [ngClass]="enableVideo ? ['fa-video']:['fa-video-slash']">
               Video</button>
             <button mat-flat-button
-                    [disabled]="!enableShareScreen"
                     (click)="shareScreen()">
               Share screen</button>
           </div>
@@ -24,23 +23,26 @@
     </div>
 </div>
 
-<mat-grid-list cols="3" rowHeight="600px">
+<mat-grid-list cols="3" >
     <!-- videos -->
-    <mat-grid-tile
-        class="video-flex"
-        [colspan]="2">
-      <div class="video-container">
-        <video #videoPlayer [muted]="true" class="video-box"></video>
-
-<!--        <div *ngSwitchCase="'SHARESCREEN'">-->
-<!--          <video [srcObject]="shareScreenStream" (loadedmetadata)="onLoadedMetadata($event)" muted></video>-->
-<!--          <span class="label badge bg-danger" *ngIf="userIsSharing">{{userIsSharing}}</span>-->
-<!--        </div>-->
-
-        <div *ngFor="let user of tempvideos">
-          <app-video-box-user class="video-box" [userVideo]="user"></app-video-box-user>
-        </div>
+    <mat-grid-tile [colspan]="2">
+      <div class="video-grid"  style="width: 100%;height: 100%;">
+        <mat-grid-list gutterSize="1%" cols="{{ getGridCols() }}" rowHeight="2:1">
+          <mat-grid-tile class="video-item">
+            <video #videoPlayer [muted]="true" class="video-item" style="height: 100%; width: 100%"></video>
+          </mat-grid-tile>
+          <mat-grid-tile *ngIf="!enableShareScreen" class="video-item">
+            <video class="video-item" style="height: 100%; width: 100%" [srcObject]="shareScreenStream" (loadedmetadata)="onLoadedMetadata($event)" muted></video>
+            <span class="label badge bg-danger" *ngIf="userIsSharing">{{userIsSharing}}</span>
+          </mat-grid-tile>
+          <mat-grid-tile
+            *ngFor="let user of tempvideos"
+            class="video-item">
+            <app-video-box-user class="video-item" [userVideo]="user"></app-video-box-user>
+          </mat-grid-tile>
+        </mat-grid-list>
       </div>
+
     </mat-grid-tile>
     <!-- text chat -->
     <mat-grid-tile
@@ -48,16 +50,3 @@
         <text-chat style="width: 100%; height: 100%"></text-chat>
     </mat-grid-tile>
 </mat-grid-list>
-
-
-<div class="row mt-1">
-    <div class="col-md-7">
-        <div [ngSwitch]="statusScreen">
-            <!-- SHARESCREEN -->
-            <div style="position: relative;" id="share-screen" *ngSwitchCase="'SHARESCREEN'">
-                <video [srcObject]="shareScreenStream" (loadedmetadata)="onLoadedMetadata($event)" muted></video>
-                <span class="label badge bg-danger" *ngIf="userIsSharing">{{userIsSharing}}</span>
-            </div>
-        </div>
-    </div>
-</div>
