@@ -77,17 +77,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     this.createLocalStream()
-
     this.chatHub.createHubConnection(this.currentUser, this.roomId, this.accountService.getAccessToken())
-
     this.configureUserPeer()
-
     this.configureShareScreenPeer()
-
     this.callGroup()
-
     this.subscribeUsers()
-
     this.subscribeShareScreens()
   }
 
@@ -276,8 +270,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     if(userInStorage){
       const user = JSON.parse(userInStorage)
       this.currentUser = user as UserInfo;
-      console.log("user in storage: ")
-      console.log(this.currentUser)
     }
     else{
       this.accountService.userProfileSubject.subscribe((userInfo) => {
