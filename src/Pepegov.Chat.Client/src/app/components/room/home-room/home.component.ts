@@ -325,9 +325,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     if(this.enableShareScreen)
       userCount++
 
-    if(userCount === 1){
-      return 1;
-    }
     else if (userCount <= 3) {
       return 2;
     } else if (userCount <= 4) {

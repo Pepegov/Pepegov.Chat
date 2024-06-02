@@ -88,7 +88,6 @@ export class LobbyListComponent implements OnInit {
       //load data into select html
       grouped.forEach((value: Room[], key: string) => {
         //console.log(key, value);
-        //cac phan tu sau khi group by la giong nhau chung 1 nhom
         let obj = {userName: key, displayName: value[0].name}
         this.roomGroupBy.push(obj)
       });
