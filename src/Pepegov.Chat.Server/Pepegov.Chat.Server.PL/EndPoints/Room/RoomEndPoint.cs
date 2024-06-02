@@ -19,10 +19,18 @@ public class RoomEndPoint : ApplicationDefinition
     {
         var app = context.Parse<WebDefinitionApplicationContext>().WebApplication;
 
-        app.MapGet("~/api/room/get-paged", GetPagedRooms).WithOpenApi();
-        app.MapPost("~/api/room/add", AddRoom).WithOpenApi();
-        app.MapPut("~/api/room/edit", EditRoom).WithOpenApi();
-        app.MapDelete("~/api/room/delete", DeleteRoom).WithOpenApi();
+        app.MapGet("~/api/room/get-paged", GetPagedRooms)
+            .WithOpenApi()
+            .WithTags("Room");
+        app.MapPost("~/api/room/add", AddRoom)
+            .WithOpenApi()
+            .WithTags("Room");
+        app.MapPut("~/api/room/edit", EditRoom)
+            .WithOpenApi()
+            .WithTags("Room");
+        app.MapDelete("~/api/room/delete", DeleteRoom)
+            .WithOpenApi()
+            .WithTags("Room");
         
         return base.ConfigureApplicationAsync(context);
     }

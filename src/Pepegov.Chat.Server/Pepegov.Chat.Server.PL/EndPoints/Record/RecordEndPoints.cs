@@ -9,7 +9,9 @@ public class RecordEndPoints : ApplicationDefinition
     public override Task ConfigureApplicationAsync(IDefinitionApplicationContext context)
     {
         var app = context.Parse<WebDefinitionApplicationContext>().WebApplication;
-        app.MapPost("~/api/record-video", RecordVideo);
+        app.MapPost("~/api/record-video", RecordVideo)
+            .WithOpenApi()
+            .WithTags("Tools.Record");
         return base.ConfigureApplicationAsync(context);
     }
 
