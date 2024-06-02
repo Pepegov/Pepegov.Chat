@@ -330,7 +330,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   getGridCols(): number {
     let userCount = this.tempvideos.length;
-    if(!this.enableShareScreen)
+    if(this.enableShareScreen)
       userCount++
 
     if(userCount === 1){
