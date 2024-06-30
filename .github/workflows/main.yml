@@ -84,7 +84,7 @@ jobs:
     deploy:
         name: 'Deploy server'
         runs-on: ubuntu-latest
-        needs: [ build-server, build-angular-client ]
+        needs: [ build-server, build-client-web-angular, build-client-web-minimal]
         steps:
             -   name: "Run deploy on server"
                 uses: appleboy/ssh-action@master
