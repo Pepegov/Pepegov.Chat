@@ -1,0 +1,45 @@
+{
+  "name": "pepegov.chat.client.web.minimal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --env development",
+    "build:development": "webpack --env development",
+    "build:production": "webpack --env production",
+    "start": "webpack serve --mode development --open",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pepegov/Pepegov.Chat.git"
+  },
+  "author": "Pepegov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Pepegov/Pepegov.Chat/issues"
+  },
+  "homepage": "https://github.com/Pepegov/Pepegov.Chat#readme",
+  "dependencies": {
+    "@microsoft/signalr": "^8.0.0",
+    "copy-webpack-plugin": "^12.0.2",
+    "dotenv": "^16.4.5",
+    "html-webpack-plugin": "^5.6.0",
+    "navigo": "^8.11.1",
+    "oidc-token-hash": "^5.0.3",
+    "peerjs": "^1.5.4",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^7.1.2",
+    "dotenv-webpack": "^8.1.0",
+    "mini-css-extract-plugin": "^2.9.0",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.5.2",
+    "webpack": "^5.92.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  }
+}
