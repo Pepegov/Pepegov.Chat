@@ -19,7 +19,7 @@ export function bootstrap(component: any): Promise<void> {
         })
         .then(() => {
             if (nameof<OnDestroyComponent>("OnDestroy") in componentInstance) {
-                window.addEventListener('beforeunload', componentInstance.OnDestroy.bind());
+                window.addEventListener('beforeunload', componentInstance.OnDestroy());
                 console.log(typeof componentInstance + " destroy")
             }
         })
