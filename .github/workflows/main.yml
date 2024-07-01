@@ -57,7 +57,7 @@ jobs:
                     tags: |
                         ${{ secrets.REGISTRY_URL }}/pepegov/chat.client.web.angular:latest
     build-client-web-minimal:
-        name: 'Build & Publish angular client'
+        name: 'Build & Publish minimal client'
         runs-on: ubuntu-latest
         steps:
             -   name: "Checkout repository"
