@@ -34,5 +34,5 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
-npm install webpack-dev-server --save-dev
+RUN npm install webpack-dev-server --save-dev
 RUN npm start
