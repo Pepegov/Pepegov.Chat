@@ -22,8 +22,9 @@ export class LoginPageComponent implements OnLoadComponent{
             let username_input = document.querySelector('#username_input') as HTMLInputElement;
             let password_input = document.querySelector('#password_input') as HTMLInputElement;
 
-            this.openIdService.ResourceOwnerPasswordAuth(username_input.value, password_input.value, ["openid", "offline_access"])
-            this.redirectTobBackUrl()
+            this.openIdService.ResourceOwnerPasswordAuth(username_input.value, password_input.value, ["openid", "offline_access"]).then(() => {
+                this.redirectTobBackUrl()
+            })
         });
     }
 
