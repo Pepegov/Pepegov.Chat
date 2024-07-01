@@ -17,7 +17,7 @@ router.on({
 
 export default router;
 
-function render(component: any){
+async function render(component: any){
     document.addEventListener('DOMContentLoaded', () => {
         bootstrap(component);
     });

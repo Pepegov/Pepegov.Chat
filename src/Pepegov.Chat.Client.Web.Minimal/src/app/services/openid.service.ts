@@ -139,7 +139,7 @@ export class OpenIdClient{
     })
 
     try {
-      const tokenSetResponse = await fetch(config.auth.tokenHost + "connect/token", {
+      const tokenSetResponse = await fetch(config.auth.tokenHost + "/connect/token", {
         body: data,
         headers: {
           "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
