@@ -16,7 +16,7 @@ export async function bootstrap(component: any): Promise<void> {
         }
 
         if (nameof<OnDestroyComponent>("OnDestroy") in componentInstance) {
-            window.addEventListener('beforeunload', await componentInstance.OnDestroy());
+            //window.addEventListener('unload', await componentInstance.OnDestroy());
         }
     } catch (err) {
         return console.warn('Something went wrong: ', err);
