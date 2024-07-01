@@ -8,6 +8,7 @@ import {RoomPageComponent} from "./pages/room/room.component";
 
 const router = new Navigo('/');
 
+console.log(ToolbarComponent)
 render(ToolbarComponent)
 router.on({
     '/': () => render(LobbyPageComponent),

@@ -11,13 +11,28 @@
 #EXPOSE 80
 #CMD ["nginx", "-g", "daemon off;"]
 
+#----------------------------------------------------------------
+
+#FROM node:14-alpine
+#WORKDIR /app
+
+#COPY package*.json ./
+#RUN npm install
+#COPY . .
+#RUN npm run build:production
+#RUN npm install -g serve
+#EXPOSE 80
+#CMD ["serve", "-s", "dist", "-l", "80"]
+
+#---------------------------------------------------------------
+
 FROM node:14-alpine
 WORKDIR /app
+EXPOSE 80
 
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build:production
+RUN npm run build
 RUN npm install -g serve
-EXPOSE 80
-CMD ["serve", "-s", "dist", "-l", "80"]
+RUN npm start
