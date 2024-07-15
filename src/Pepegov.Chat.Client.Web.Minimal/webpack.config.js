@@ -11,6 +11,13 @@ module.exports = (env, argv) => {
     return {
         entry: {
             index: './src/index.ts',
+            about: './src/app/pages/about.ts',
+            home: './src/app/pages/room/room.component.ts',
+            login: './src/app/pages/login/login.component.ts',
+            notFound: './src/app/pages/not-found.ts',
+            lobby: './src/app/pages/lobby/lobby.component.ts',
+            toolbar: './src/app/components/toolbar/toolbar.component.ts',
+            modal: './src/app/components/modal/modal.component.ts'
         },
         optimization: {
             runtimeChunk: true,
