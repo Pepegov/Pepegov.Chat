@@ -51,13 +51,11 @@
                 originalConsole.info.apply(console, args);
             };
 
-            // Обработчик глобальных ошибок
             window.onerror = function(message, source, lineno, colno, error) {
                 debuglog("[GLOBAL ERROR] source:" + source + " message: " + message + " error: " + error);
                 originalConsole.error.apply(console, arguments);
             };
 
-            // Обработчик необработанных промисов
             window.addEventListener('unhandledrejection', function(event) {
                 debuglog(event.reason);
                 originalConsole.error.apply(console, [event.reason]);
