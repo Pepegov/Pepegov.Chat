@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Pepegov.Chat.Client.Web.Minimal</title>
-        <link rel="icon" type="image/x-icon" href="favicon.pnga">
+        <link rel="icon" type="image/x-icon" href="favicon.png">
         <script>
             const history_length = 10;
             var debugmessages = Array(history_length);
@@ -52,7 +52,7 @@
             };
 
             window.onerror = function(message, source, lineno, colno, error) {
-                debuglog("[GLOBAL ERROR] source:" + source + " message: " + message + " error: " + error);
+                debuglog("[GLOBAL ERROR] source:" + source + " message: " + message + " error: " + error + ". LINE:"+lineno+" COL:"+colno);
                 originalConsole.error.apply(console, arguments);
             };
 
