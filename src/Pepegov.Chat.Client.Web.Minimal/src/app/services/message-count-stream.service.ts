@@ -2,12 +2,12 @@ import { ReplaySubject } from 'rxjs';
 
 export class MessageCountStreamService {
   activeTabChat = false;
-  private messageCount = 0;
+  messageCount = 0;
 
-  private messageCountSource = new ReplaySubject<number>(1);
+  messageCountSource = new ReplaySubject<number>(1);
   messageCount$ = this.messageCountSource.asObservable();
 
-  private activeTabChatSource = new ReplaySubject<boolean>(1);
+  activeTabChatSource = new ReplaySubject<boolean>(1);
   activeTabChat$ = this.activeTabChatSource.asObservable();
 
   constructor() { }

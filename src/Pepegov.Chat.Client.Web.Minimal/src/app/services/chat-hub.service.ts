@@ -8,22 +8,28 @@ import {UserInfo} from "../models/auth/user-info";
 
 export class ChatHubService {
   hubUrl = process.env.hubUrl;
-  private hubConnection: HubConnection;
+  hubConnection: HubConnection;
 
   //private onlineUsersSource = new BehaviorSubject<Member[]>([]);
   //onlineUsers$ = this.onlineUsersSource.asObservable();
 
-  private oneOnlineUserSource = new Subject<UserInfo>();
+  oneOnlineUserSource = new Subject<UserInfo>();
   oneOnlineUser$ = this.oneOnlineUserSource.asObservable();
 
-  private oneOfflineUserSource = new Subject<UserInfo>();
+  oneOfflineUserSource = new Subject<UserInfo>();
   oneOfflineUser$ = this.oneOfflineUserSource.asObservable();
 
-  private messagesThreadSource = new BehaviorSubject<Message[]>([]);
+  messagesThreadSource = new BehaviorSubject<Message[]>([]);
   messagesThread$ = this.messagesThreadSource.asObservable();
 
-  constructor(private messageCount: MessageCountStreamService,
-    private muteCamMicro: MuteCamMicService) { }
+  messageCount: MessageCountStreamService
+  muteCamMicro: MuteCamMicService
+  constructor(messageCount: MessageCountStreamService,
+    muteCamMicro: MuteCamMicService)
+  {
+    this.messageCount = messageCount;
+    this.muteCamMicro = muteCamMicro;
+  }
 
   createHubConnection(user: UserInfo, roomId: string, token : string){
     console.log(`try connect to hub ${this.hubUrl+ 'chathub?roomId=' + roomId} | access token = ${token}`)

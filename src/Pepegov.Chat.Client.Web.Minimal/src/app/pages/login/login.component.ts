@@ -28,7 +28,7 @@ export class LoginPageComponent implements OnLoadComponent{
         });
     }
 
-    private redirectTobBackUrl() : void {
+    redirectTobBackUrl() : void {
         const url = getCurrentQueryParams().get('redirect_uri');
         if(url){
             window.location.href = url;

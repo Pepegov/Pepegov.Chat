@@ -9,7 +9,7 @@ import {Room} from "../../models/chat/room";
     templateUrl: './lobby.component.html',
 })
 export class LobbyPageComponent implements OnLoadComponent{
-    private chatHubService: ChatHubService;
+    chatHubService: ChatHubService;
 
     constructor() {
         this.chatHubService  = new ChatHubService();

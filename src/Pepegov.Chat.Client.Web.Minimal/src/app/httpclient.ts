@@ -1,5 +1,5 @@
 export default class HttpClient {
-    private accessTokenFactory: () => (string | null);
+    accessTokenFactory: () => (string | null);
 
     constructor(accessTokenFactory: () => (string | null)) {
         this.accessTokenFactory = accessTokenFactory;

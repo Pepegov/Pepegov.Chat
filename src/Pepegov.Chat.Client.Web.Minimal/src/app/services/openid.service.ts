@@ -19,7 +19,7 @@ enum Flows {
 }
 
 export class SimpleOpenIdService {
-  private httpClient: HttpClient;
+  httpClient: HttpClient;
 
   constructor() {
     this.httpClient = new HttpClient(() => this.GetAccessTokenOnStorage())
@@ -122,7 +122,7 @@ interface OpenIdError {
 }
 
 export class OpenIdClient{
-  private config : OpenIdConfig
+  config : OpenIdConfig
 
   constructor(openIdConfig: OpenIdConfig) {
     this.config = openIdConfig

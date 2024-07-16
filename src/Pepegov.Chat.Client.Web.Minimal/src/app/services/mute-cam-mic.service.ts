@@ -4,25 +4,25 @@ import { MuteObject } from '../models/chat/mute-object';
 
 export class MuteCamMicService {
 
-  private muteMicro: MuteObject;
-  private muteCamera: MuteObject;
+  muteMicro: MuteObject;
+  muteCamera: MuteObject;
 
-  private muteMicroSource = new Subject<MuteObject>();
+  muteMicroSource = new Subject<MuteObject>();
   muteMicro$ = this.muteMicroSource.asObservable();
 
-  private muteCameraSource = new Subject<MuteObject>();
+  muteCameraSource = new Subject<MuteObject>();
   muteCamera$ = this.muteCameraSource.asObservable();
 
-  private shareScreenSource = new Subject<boolean>();
+  shareScreenSource = new Subject<boolean>();
   shareScreen$ = this.shareScreenSource.asObservable();
 
-  private lastShareScreenSource = new Subject<LastUserJoinRoom>();
+  lastShareScreenSource = new Subject<LastUserJoinRoom>();
   lastShareScreen$ = this.lastShareScreenSource.asObservable();
 
-  private shareScreenToLastUserSource = new Subject<boolean>();
+  shareScreenToLastUserSource = new Subject<boolean>();
   shareScreenToLastUser$ = this.shareScreenToLastUserSource.asObservable();
 
-  private userIsSharingSource = new Subject<string>();
+  userIsSharingSource = new Subject<string>();
   userIsSharing$ = this.userIsSharingSource.asObservable();
 
   constructor() { }
