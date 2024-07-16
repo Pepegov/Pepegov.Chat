@@ -74,12 +74,10 @@
                 if (!response.ok) {
                     const errorMessage = `[FETCH ERROR] ${response.status}: ${response.statusText} for ${response.url}`;
                     console.error(errorMessage);
-                    consoleOutput.push({ type: 'fetch error', message: [errorMessage] });
                 }
                 return response;
             } catch (error) {
                 console.error('[FETCH ERROR]', error);
-                consoleOutput.push({ type: 'fetch error', message: [error.message] });
                 throw error;
             }
         };
@@ -87,7 +85,7 @@
         <div id="modal"></div>
         <div id="toolbar"></div>
         <div id="app"></div>
-        <div id="debugdiv" style="z-index: 1; position: absolute; left: 20px; top: 200px; background-color: grey; border: white 1px;">Debug output</div>
+        <div id="debugdiv" style="z-index: 1; position: absolute; left: 20px; top: 200px; background-color: grey; border: solid white 1px; padding: 10px">Debug output</div>
         <script src="index.ts"></script>
     </body>
 </html>
