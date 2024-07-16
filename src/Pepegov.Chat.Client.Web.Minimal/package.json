@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --env development",
     "build:development": "webpack --env development",
-    "build:production": "webpack --env production",
+    "build:production": "webpack --env production --mode production",
     "start": "webpack serve --mode development --open",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
