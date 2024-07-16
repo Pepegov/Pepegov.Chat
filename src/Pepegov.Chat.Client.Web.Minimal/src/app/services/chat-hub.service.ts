@@ -10,7 +10,7 @@ export class ChatHubService {
   hubUrl = process.env.hubUrl;
   hubConnection: HubConnection;
 
-  //private onlineUsersSource = new BehaviorSubject<Member[]>([]);
+  //onlineUsersSource = new BehaviorSubject<Member[]>([]);
   //onlineUsers$ = this.onlineUsersSource.asObservable();
 
   oneOnlineUserSource = new Subject<UserInfo>();
