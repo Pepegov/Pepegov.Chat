@@ -4,7 +4,7 @@ import {LobbyPageComponent} from "./pages/lobby/lobby.component";
 import {LoginPageComponent} from "./pages/login/login.component";
 import loadNotFound from "./pages/not-found";
 import {bootstrap} from "./bootstrap";
-//import {RoomPageComponent} from "./pages/room/room.component";
+import {RoomPageComponent} from "./pages/room/room.component";
 
 const router = new Navigo('/');
 
@@ -13,7 +13,7 @@ render(ToolbarComponent)
 router.on({
     '/': () => render(LobbyPageComponent),
     '/login': () => render(LoginPageComponent),
-//    "/room": (id:string) => render(RoomPageComponent)
+    '/room': (id:string) => render(RoomPageComponent)
 }).notFound((() => loadNotFound()))
 
 export default router;

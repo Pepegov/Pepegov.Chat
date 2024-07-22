@@ -26,18 +26,30 @@ module.exports = (env, argv) => {
             rules: [
                 {
                     test: /\.tsx?$/,
-                    use: 'ts-loader',
-                    exclude: /node_modules/
-                },
-                {
-                    test: /\.jsx?$/,
                     exclude: /node_modules/,
-                    use: {
-                        loader: 'babel-loader',
-                        options: {
-                            presets: ['@babel/preset-env']
-                        }
-                    }
+                    use: [
+                        {
+                            loader: 'babel-loader',
+                            options: {
+                                presets: [
+                                    '@babel/preset-typescript',
+                                    [
+                                        '@babel/preset-env'
+                                    ]
+                                ],
+                                plugins: [
+                                    ['@babel/plugin-proposal-decorators', { legacy: true }],
+                                    ['@babel/plugin-proposal-class-properties', { loose: false }],
+                                    ['@babel/plugin-transform-private-property-in-object', { loose: false }],
+                                    ['@babel/plugin-transform-private-methods', { loose: false }],
+                                    ['@babel/plugin-proposal-private-methods', { loose: false }],
+                                    ['@babel/plugin-transform-class-properties', { loose: false }],
+                                    '@babel/plugin-transform-block-scoping',
+                                    '@babel/plugin-transform-class-static-block'
+                                ]
+                            }
+                        },
+                    ],
                 },
                 {
                     test: /\.css$/,
@@ -46,7 +58,7 @@ module.exports = (env, argv) => {
             ],
         },
         resolve: {
-            extensions: ['.ts', '.js'],
+            extensions: ['.js', '.jsx', '.tsx', '.ts'],
         },
         output: {
             filename: '[name].bundle.js',
