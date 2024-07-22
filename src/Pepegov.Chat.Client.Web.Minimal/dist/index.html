@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pepegov.Chat.Client.Web.Minimal</title><link rel="icon" type="image/x-icon" href="favicon.png"><script>const history_length = 10;
+            var debugmessages = Array(history_length);
+            function debuglog(message) {
+                var el = document.getElementById('debugdiv');
+                for(var i = history_length - 1; i > 0; i--) {
+                    debugmessages[i] = debugmessages[i - 1];
+                }
+                debugmessages[0] = message;
+                el.innerHTML = "";
+                for(var i = history_length - 1; i >= 0; i--) {
+                    if(debugmessages[i] !== undefined) {
+                        el.innerHTML += "<p style=\"margin: 0 0 0 0; padding: 0 0 0 0; line-height: 1;\">" + debugmessages[i] + "</p>";
+                    }
+                }
+            }
+            function ondebugerror(event) {
+                debuglog(event.message);
+            }
+            const originalConsole = {
+                log: console.log,
+                error: console.error,
+                warn: console.warn,
+                info: console.info,
+            };
+
+            console.log = function(...args) {
+                debuglog(args);
+                originalConsole.log.apply(console, args);
+            };
+
+            console.error = function(...args) {
+                debuglog(args);
+                originalConsole.error.apply(console, args);
+            };
+
+            console.warn = function(...args) {
+                debuglog(args);
+                originalConsole.warn.apply(console, args);
+            };
+
+            console.info = function(...args) {
+                debuglog(args);
+                originalConsole.info.apply(console, args);
+            };
+
+            window.onerror = function(message, source, lineno, colno, error) {
+                debuglog("[GLOBAL ERROR] source:" + source + " message: " + message + " error: " + error + ". LINE:"+lineno+" COL:"+colno);
+                originalConsole.error.apply(console, arguments);
+            };
+
+            window.addEventListener('unhandledrejection', function(event) {
+                debuglog(event.reason);
+                originalConsole.error.apply(console, [event.reason]);
+            });
+
+            const originalFetch = window.fetch;
+
+            window.fetch = async function(...args) {
+                try {
+                    const response = await originalFetch.apply(this, args);
+                    if (!response.ok) {
+                        const errorMessage = `[FETCH ERROR] ${response.status}: ${response.statusText} for ${response.url}`;
+                        console.error(errorMessage);
+                    }
+                    return response;
+                } catch (error) {
+                    console.error('[FETCH ERROR]', error);
+                    throw error;
+                }
+            };</script><script src="index.bundle.js"></script><script defer="defer" src="runtime~index.bundle.js"></script><script defer="defer" src="index.bundle.js"></script><link href="index.css" rel="stylesheet"></head><body><div id="modal"></div><div id="toolbar"></div><div id="app"></div><div id="debugdiv" style="z-index: 1; position: absolute; left: 20px; top: 200px; background-color: grey; border: solid white 1px; padding: 10px">Debug output</div></body></html>
