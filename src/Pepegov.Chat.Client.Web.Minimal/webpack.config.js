@@ -25,7 +25,7 @@ module.exports = (env, argv) => {
         module: {
             rules: [
                 {
-                    test: /\.tsx?$/,
+                    test: /\.(js|jsx|tsx|ts)$/,
                     exclude: /node_modules/,
                     use: [
                         {
@@ -34,16 +34,22 @@ module.exports = (env, argv) => {
                                 presets: [
                                     '@babel/preset-typescript',
                                     [
-                                        '@babel/preset-env'
+                                        '@babel/preset-env',
+                                        {
+                                            "targets": "> 0.25%, not dead"
+                                        }
                                     ]
                                 ],
                                 plugins: [
                                     ['@babel/plugin-proposal-decorators', { legacy: true }],
-                                    ['@babel/plugin-proposal-class-properties', { loose: false }],
-                                    ['@babel/plugin-transform-private-property-in-object', { loose: false }],
-                                    ['@babel/plugin-transform-private-methods', { loose: false }],
-                                    ['@babel/plugin-proposal-private-methods', { loose: false }],
-                                    ['@babel/plugin-transform-class-properties', { loose: false }],
+                                    ["@babel/plugin-proposal-private-methods", { "loose": true }],
+                                    ["@babel/plugin-proposal-private-property-in-object", { "loose": true }],
+                                    ["@babel/plugin-proposal-class-properties", { "loose": true }],
+                                    ["@babel/plugin-transform-runtime"],
+
+                                    ['@babel/plugin-transform-private-property-in-object'],
+                                    ['@babel/plugin-transform-private-methods'],
+                                    ['@babel/plugin-transform-class-properties'],
                                     '@babel/plugin-transform-block-scoping',
                                     '@babel/plugin-transform-class-static-block'
                                 ]
