@@ -36,22 +36,16 @@ module.exports = (env, argv) => {
                                     [
                                         '@babel/preset-env',
                                         {
-                                            "targets": "> 0.25%, not dead"
+                                            "esmodules": true
                                         }
                                     ]
                                 ],
                                 plugins: [
-                                    ['@babel/plugin-proposal-decorators', { legacy: true }],
                                     ["@babel/plugin-proposal-private-methods", { "loose": true }],
                                     ["@babel/plugin-proposal-private-property-in-object", { "loose": true }],
                                     ["@babel/plugin-proposal-class-properties", { "loose": true }],
-                                    ["@babel/plugin-transform-runtime"],
-
-                                    ['@babel/plugin-transform-private-property-in-object'],
-                                    ['@babel/plugin-transform-private-methods'],
-                                    ['@babel/plugin-transform-class-properties'],
-                                    '@babel/plugin-transform-block-scoping',
-                                    '@babel/plugin-transform-class-static-block'
+                                    "@babel/plugin-transform-runtime",
+                                    "@babel/plugin-transform-block-scoping"
                                 ]
                             }
                         },
