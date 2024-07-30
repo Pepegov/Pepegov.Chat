@@ -40,10 +40,7 @@ export class SignalingSignalRService implements SignalingService {
         this.servers = {
             iceServers: [
                 { urls: "stun:freeturn.net:5349" },
-                { urls: "stun1.l.google.com:19302" },
-                { urls: "stun2.l.google.com:19302" },
-                { urls: "stun3.l.google.com:19302" },
-                { urls: "stun4.l.google.com:19302" },
+                { urls: "stun.l.google.com:19302" },
                 { urls: "stun.ekiga.net" },
                 { urls: "stun.ideasip.com" },
                 { urls: 'turn:numb.viagenie.ca', credential: 'muazkh', username: 'webrtc@live.com' },
