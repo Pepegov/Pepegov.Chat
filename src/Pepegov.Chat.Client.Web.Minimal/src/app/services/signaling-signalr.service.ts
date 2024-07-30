@@ -3,6 +3,12 @@ import {SignalingService} from "./Interfaces/SignalingService";
 import {HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel} from '@microsoft/signalr';
 import {SimpleOpenIdService} from "./openid.service";
 
+interface RTCIceServer {
+    credential?: string | undefined;
+    urls: string | string[];
+    username?: string | undefined;
+}
+
 export class SignalingSignalRService implements SignalingService {
     public openIdService: SimpleOpenIdService;
     connection: HubConnection;
@@ -11,7 +17,7 @@ export class SignalingSignalRService implements SignalingService {
     currentUser: UserInfo;
     roomId: string;
     hubUrl = process.env.hubUrl;
-    servers : {iceServers: {urls: string}[]};
+    servers : {iceServers: RTCIceServer[]};
 
     constructor(userStream: MediaStream) {
         this.userSteam = userStream;
@@ -33,7 +39,8 @@ export class SignalingSignalRService implements SignalingService {
 
         this.servers = {
             iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' }
+                { urls: "stun:freeturn.net:5349" },
+                { urls: 'turns:freeturn.tel:5349', username: 'free', credential: 'free' }
             ]
         };
         this.roomId = roomId;
