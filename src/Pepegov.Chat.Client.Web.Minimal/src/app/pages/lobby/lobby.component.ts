@@ -1,22 +1,22 @@
 import "./lobby.component.css"
 import {Component} from "../../component.decoration";
 import {OnLoadComponent} from "../../component.app";
-import {ChatHubService} from "../../services/lobby.service"
 import {Room} from "../../models/chat/room";
+import {LobbyService} from "../../services/lobby.service";
 
 @Component({
     selector: 'app',
     templateUrl: './lobby.component.html',
 })
 export class LobbyPageComponent implements OnLoadComponent{
-    chatHubService: ChatHubService;
+    lobbyService: LobbyService;
 
     constructor() {
-        this.chatHubService  = new ChatHubService();
+        this.lobbyService  = new LobbyService();
     }
 
     OnLoad(): void {
-        this.chatHubService.GetRooms(0, 20).then(response => {
+        this.lobbyService.GetRooms(0, 20).then(response => {
             if(!response.isSuccessful){
                 const messages = response.exceptions?.map((value, index) => {
                     return "ERROR" + index + ": source " + value.source + " message " + value.message;
@@ -50,5 +50,4 @@ export class LobbyPageComponent implements OnLoadComponent{
             `;
         return tr;
     }
-
 }

@@ -4,7 +4,7 @@ import {Room} from "../models/chat/room";
 import {SimpleOpenIdService} from "./openid.service";
 import HttpClient from "../httpclient";
 
-export class ChatHubService {
+export class LobbyService {
     openIdService : SimpleOpenIdService
     httpClient: HttpClient;
     baseUrl = process.env.apiUrl;

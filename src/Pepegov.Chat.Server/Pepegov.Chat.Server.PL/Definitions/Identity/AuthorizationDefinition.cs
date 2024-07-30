@@ -103,8 +103,8 @@ public class AuthorizationDefinition : ApplicationDefinition
 
         //app.UseHttpsRedirection();
         app.UseRouting(); 
-        //app.UseCors(AppData.PolicyName);
-        app.UseCors(c => c.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+        app.UseCors(AppData.PolicyName);
+        //app.UseCors(c => c.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
         app.UseAuthentication();
         app.UseAuthorization();
         
@@ -113,6 +113,7 @@ public class AuthorizationDefinition : ApplicationDefinition
             endpoints.MapControllers();
             endpoints.MapHub<PresenceHub>("hubs/presence").WithOpenApi();
             endpoints.MapHub<ChatHub>("hubs/chathub").WithOpenApi();
+            endpoints.MapHub<SignalingHub>("hubs/SignalingHub").WithOpenApi();
         });
 
         // registering UserIdentity helper as singleton
